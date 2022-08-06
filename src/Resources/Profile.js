@@ -1,9 +1,8 @@
 import React from "react";
 import { Outlet, Link } from "react-router-dom";
 import { User, CaretLeft } from "react-iconly";
-import "./Profile.css";
-import divider from "./NavBar Divider.svg";
-import { FileX } from "react-bootstrap-icons";
+import "./cssfiles/Profile.css";
+import divider from "./images/NavBar Divider.svg";
 
 const Profile = () => {
   return (
