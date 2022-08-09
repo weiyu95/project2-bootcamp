@@ -3,7 +3,7 @@ import { Home, Search, Plus, Buy, User } from "react-iconly";
 import { Outlet, Link, useLocation } from "react-router-dom";
 import "./cssfiles/NavBar.css";
 
-const Nav = () => {
+const Nav = (props) => {
   const location = useLocation();
   return (
     <>
@@ -51,16 +51,30 @@ const Nav = () => {
             </Link>
           </li>
           <li>
-            <Link to="/profile">
-              <div className="profile">
-                <User
-                  set="bold"
-                  primaryColor={
-                    location.pathname === "/profile" ? "black" : "#878D98"
-                  }
-                />
-              </div>
-            </Link>
+            {props.info.userIsLoggedIn ? (
+              <Link to="/profile">
+                <div className="profile">
+                  <User
+                    set="bold"
+                    primaryColor={
+                      location.pathname === "/profile" ? "black" : "#878D98"
+                    }
+                  />
+                </div>
+              </Link>
+            ) : (
+              <Link to="/login">
+                {" "}
+                <div className="profile">
+                  <User
+                    set="bold"
+                    primaryColor={
+                      location.pathname === "/login" ? "black" : "#878D98"
+                    }
+                  />
+                </div>
+              </Link>
+            )}
           </li>
         </ul>
       </div>
