@@ -1,6 +1,10 @@
-import React from "react";
+import React, { useDeferredValue, useState } from "react";
 import { Routes, Route } from "react-router-dom";
-// import logo from "./logo.png";
+import {
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+} from "firebase/auth";
+import { auth } from "./firebase";
 import "./App.css";
 
 import { Nav } from "./Resources/NavBar";
@@ -18,33 +22,60 @@ import { TrackOrderStatus } from "./Resources/TrackOrderStatus.js";
 import { Upload } from "./Resources/Upload.js";
 import { UploadPicture } from "./Resources/uploadpicture.js";
 
-class App extends React.Component {
-  render() {
-    return (
-      <div>
-        <Routes>
-          <Route path="/" element={<Nav />}>
-            <Route path="newsfeed" element={<Newsfeed />} />
-            <Route path="login" element={<Login />} />
-            <Route path="profile" element={<Profile />} />
-            <Route path="profile/uploadpicture" element={<UploadPicture />} />
-            <Route path="profile/changepassword" element={<ChangePassword />} />
-            <Route path="profile/likedproduct" element={<LikedProducts />} />
-            <Route path="profile/allorders" element={<AllOrders />} />
-            <Route
-              path="profile/allorders/trackorderstatus"
-              element={<TrackOrderStatus />}
-            />
-            <Route path="profile/orderhistory" element={<OrderHistory />} />
-            <Route path="profile/paymentmethod" element={<PaymentMethod />} />
-            <Route path="search" element={<Search />} />
-            <Route path="upload" element={<Upload />} />
-            <Route path="cart" element={<Cart />} />
-          </Route>
-        </Routes>
-      </div>
-    );
-  }
-}
+const App = () => {
+  const [userInfo, setuserInfo] = useState({
+    userIsLoggedIn: false,
+    userID: "",
+    userdpname: "",
+    username: "",
+  });
+
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      setuserInfo({
+        userIsLoggedIn: true,
+        userID: user.uid,
+        userdpname: user.email,
+        username: () => {
+          const index = user.email.indexOf("@");
+          var userid = user.email.substring(0, index);
+          return userid;
+        },
+      });
+    } else {
+      setuserInfo({
+        userIsLoggedIn: false,
+        userID: "",
+        userdpname: "",
+        username: "",
+      });
+    }
+  });
+
+  return (
+    <div>
+      <Routes>
+        <Route path="/" element={<Nav info={userInfo} />}>
+          <Route path="newsfeed" element={<Newsfeed />} />
+          <Route path="login" element={<Login info={userInfo} />} />
+          <Route path="profile" element={<Profile info={userInfo} />} />
+          <Route path="profile/uploadpicture" element={<UploadPicture />} />
+          <Route path="profile/changepassword" element={<ChangePassword />} />
+          <Route path="profile/likedproduct" element={<LikedProducts />} />
+          <Route path="profile/allorders" element={<AllOrders />} />
+          <Route
+            path="profile/allorders/trackorderstatus"
+            element={<TrackOrderStatus />}
+          />
+          <Route path="profile/orderhistory" element={<OrderHistory />} />
+          <Route path="profile/paymentmethod" element={<PaymentMethod />} />
+          <Route path="search" element={<Search />} />
+          <Route path="upload" element={<Upload />} />
+          <Route path="cart" element={<Cart />} />
+        </Route>
+      </Routes>
+    </div>
+  );
+};
 
 export default App;

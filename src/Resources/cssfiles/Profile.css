@@ -140,3 +140,14 @@ body {
   color: #2ff522;
   font-size: 20px;
 }
+
+.LogoutBtn {
+  margin-top: 10px;
+  padding-inline-start: 0%;
+  font-family: "Noto Serif JP";
+  font-style: normal;
+  font-stretch: expanded;
+  text-decoration: underline;
+  font-size: 30px;
+  color: red;
+}
