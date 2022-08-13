@@ -1,4 +1,4 @@
-import React, { useDeferredValue, useState } from "react";
+import React, { useDeferredValue, useState, useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 import {
   createUserWithEmailAndPassword,
@@ -30,27 +30,29 @@ const App = () => {
     username: "",
   });
 
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      setuserInfo({
-        userIsLoggedIn: true,
-        userID: user.uid,
-        userdpname: user.email,
-        username: () => {
-          const index = user.email.indexOf("@");
-          var userid = user.email.substring(0, index);
-          return userid;
-        },
-      });
-    } else {
-      setuserInfo({
-        userIsLoggedIn: false,
-        userID: "",
-        userdpname: "",
-        username: "",
-      });
-    }
-  });
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setuserInfo({
+          userIsLoggedIn: true,
+          userID: user.uid,
+          userdpname: user.email,
+          username: () => {
+            const index = user.email.indexOf("@");
+            var userid = user.email.substring(0, index);
+            return userid;
+          },
+        });
+      } else {
+        setuserInfo({
+          userIsLoggedIn: false,
+          userID: "",
+          userdpname: "",
+          username: "",
+        });
+      }
+    });
+  }, []);
 
   return (
     <div>
