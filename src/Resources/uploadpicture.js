@@ -4,16 +4,17 @@ import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 
 import { Outlet, Link } from "react-router-dom";
 
-const UploadPicture = () => {
+const UploadPicture = (props) => {
   const [imageurl, setimageurl] = useState(null);
   const [selectedFile, setUploadFile] = useState(null);
   const [progess, setProgress] = useState();
 
   const storageRef = ref(storage);
+  const profilePicFolderRef = ref(storageRef, "ProfilePictures");
 
   const imagesRef = ref(
-    storageRef,
-    selectedFile != null ? selectedFile.name : "soundonly_1_re.jpg"
+    profilePicFolderRef,
+    progess === 100 ? selectedFile.name : "soundonly_1_re.jpg"
   );
 
   getDownloadURL(imagesRef)
@@ -48,7 +49,7 @@ const UploadPicture = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const storageRef = ref(storage, `iamges/${selectedFile.name}`);
+    const storageRef = ref(storage, `ProfilePictures/${selectedFile.name}`);
     const uploadTask = uploadBytesResumable(storageRef, selectedFile);
     uploadTask.on("state_changed", (snapshot) => {
       const prog = Math.round(
