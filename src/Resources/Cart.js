@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {
   push,
-  onChildAdded, onValue,
+  onChildAdded,
   ref as databaseRef,
   update,
   set,
@@ -30,12 +30,6 @@ const Cart = ({ user }) => {
   console.log(userCartItems);
 
   const handleOrder = (itemOrdered) => {
-    // const userRef = databaseRef(database, `${USERS_FOLDER_NAME}/user/cart`);
-    // onValue(userRef, (snapshot) => {
-    //   const data = snapshot.val();
-    //   console.log(data)
-    //   console.log(data.item3)
-    // })
     const ordersListRef = databaseRef(database, USER_ORDERS_NAME);
     const newOrderRef = push(ordersListRef);
     const index = userCartItems.findIndex((item)=>item.key === itemOrdered)
@@ -47,6 +41,13 @@ const Cart = ({ user }) => {
 
   const handleDelete = (itemDeleted) => {
     console.log(itemDeleted);
+    console.log(`old cart: ${userCartItems}`);
+    const newArray = userCartItems.filter(
+      (cartItems) => cartItems.key !== itemDeleted
+    );
+    setUserCartItems(newArray);
+    console.log(`newArray: ${newArray}`);
+    console.log(`new cart: ${userCartItems}`)
     const updates = {};
     updates[`/${USERS_FOLDER_NAME}/user/cart/${itemDeleted}`] = null;
     return update(databaseRef(database), updates);
