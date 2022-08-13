@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, Navigate } from "react-router-dom";
 import { User, CaretLeft } from "react-iconly";
-import { auth } from "/home/hajiwee/RAbootcamp/bootcamp/projects/project2-bootcamp/src/firebase";
+import { auth } from "../firebase";
 import { signOut } from "firebase/auth";
 import "./cssfiles/Profile.css";
 import divider from "./images/NavBar Divider.svg";

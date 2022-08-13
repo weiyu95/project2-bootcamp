@@ -6,3 +6,7 @@ const TrackOrderStatus = () => {
 };
 
 export { TrackOrderStatus };
+
+// what is displayed in Track Order Status?
+// - Individual order's delivery status
+// - Item Image, Estimated Delivery Date, Tracking Number, Delivery Status (Vertical Stepper).

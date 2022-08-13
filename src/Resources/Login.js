@@ -6,7 +6,7 @@ import apple from "./images/Apple.png";
 import facebook from "./images/Facebook.png";
 import google from "./images/Google.png";
 import { Navigate } from "react-router-dom";
-import { auth } from "/home/hajiwee/RAbootcamp/bootcamp/projects/project2-bootcamp/src/firebase";
+import { auth } from "../firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { Button } from "bootstrap";
 
