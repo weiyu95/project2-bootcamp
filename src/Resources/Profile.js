@@ -1,12 +1,21 @@
 import React from "react";
 import { Link, Navigate } from "react-router-dom";
 import { User, CaretLeft } from "react-iconly";
-import { auth } from "/home/hajiwee/RAbootcamp/bootcamp/projects/project2-bootcamp/src/firebase";
+import { auth } from "../firebase";
+import { sendPasswordResetEmail } from "firebase/auth";
 import { signOut } from "firebase/auth";
 import "./cssfiles/Profile.css";
 import divider from "./images/NavBar Divider.svg";
 
 const Profile = (props) => {
+  const resetPassword = () => {
+    sendPasswordResetEmail(auth, props.info.userdpname)
+      .then(() =>
+        window.alert("Please Check your email to reset your password")
+      )
+      .catch((err) => window.alert("Enter your username"));
+  };
+
   return (
     <div>
       {props.info.userIsLoggedIn ? (
@@ -44,20 +53,15 @@ const Profile = (props) => {
                   </li>
                   <li>
                     <ul className="UserDetails">
-                      <li className="label">UserName :</li>
-                      <li className="info">{props.info.username}</li>
-                    </ul>
-                  </li>
-                  <li>
-                    <ul className="UserDetails">
-                      <li className="label">Password :</li>
-                      <li className="info">**********</li>
+                      <li className="info">{props.info.userdpname}</li>
                     </ul>
                   </li>
                   <li className="changeDisplayPic">
-                    <Link to="changepassword"> Change Password</Link>
+                    <h3 className="ChangePwd" onClick={resetPassword}>
+                      Change Password
+                    </h3>
                   </li>
-                  <li>
+                  <li style={{ paddingTop: 5 }}>
                     <Link className="ProductsLink" to="likedproduct">
                       Liked Products
                     </Link>

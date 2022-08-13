@@ -1,18 +1,15 @@
-import React, { useDeferredValue, useState } from "react";
+import React, { useDeferredValue, useEffect, useState } from "react";
 import { Routes, Route } from "react-router-dom";
-import {
-  createUserWithEmailAndPassword,
-  onAuthStateChanged,
-} from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebase";
 import "./App.css";
 
 import { Nav } from "./Resources/NavBar";
 import { AllOrders } from "./Resources/AllOrders.js";
 import { Cart } from "./Resources/Cart.js";
-import { ChangePassword } from "./Resources/ChangePassword.js";
 import { LikedProducts } from "./Resources/LikedProducts.js";
 import { Login } from "./Resources/Login.js";
+import { Create } from "./Resources/CreateUseraccount.js";
 import { Newsfeed } from "./Resources/Newsfeed";
 import { OrderHistory } from "./Resources/OrderHistory.js";
 import { PaymentMethod } from "./Resources/PaymentMethod.js";
@@ -27,30 +24,26 @@ const App = () => {
     userIsLoggedIn: false,
     userID: "",
     userdpname: "",
-    username: "",
+    profilePicURL: "",
   });
 
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      setuserInfo({
-        userIsLoggedIn: true,
-        userID: user.uid,
-        userdpname: user.email,
-        username: () => {
-          const index = user.email.indexOf("@");
-          var userid = user.email.substring(0, index);
-          return userid;
-        },
-      });
-    } else {
-      setuserInfo({
-        userIsLoggedIn: false,
-        userID: "",
-        userdpname: "",
-        username: "",
-      });
-    }
-  });
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setuserInfo({
+          userIsLoggedIn: true,
+          userID: user.uid,
+          userdpname: user.email,
+        });
+      } else {
+        setuserInfo({
+          userIsLoggedIn: false,
+          userID: "",
+          userdpname: "",
+        });
+      }
+    });
+  }, []);
 
   return (
     <div>
@@ -58,9 +51,12 @@ const App = () => {
         <Route path="/" element={<Nav info={userInfo} />}>
           <Route path="newsfeed" element={<Newsfeed />} />
           <Route path="login" element={<Login info={userInfo} />} />
+          <Route path="createaccount" element={<Create info={userInfo} />} />
           <Route path="profile" element={<Profile info={userInfo} />} />
-          <Route path="profile/uploadpicture" element={<UploadPicture />} />
-          <Route path="profile/changepassword" element={<ChangePassword />} />
+          <Route
+            path="profile/uploadpicture"
+            element={<UploadPicture info={userInfo} />}
+          />
           <Route path="profile/likedproduct" element={<LikedProducts />} />
           <Route path="profile/allorders" element={<AllOrders />} />
           <Route

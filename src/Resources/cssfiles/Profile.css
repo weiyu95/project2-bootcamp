@@ -119,6 +119,15 @@ body {
   color: #2e2c51;
 }
 
+.ChangePwd {
+  position: absolute;
+  top: 330px;
+  font-weight: bold;
+  padding-top: 2%;
+  color: #2e2c51;
+  text-decoration: underline;
+}
+
 .label {
   text-align: left;
   font-size: 20px;
