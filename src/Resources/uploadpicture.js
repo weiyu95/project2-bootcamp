@@ -1,20 +1,20 @@
 import React, { useState } from "react";
-import { storage } from "../firebase";
+import { storage, database } from "../firebase";
+import { ref as refdb, set, child } from "firebase/database";
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
-
-import { Outlet, Link } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
 const UploadPicture = (props) => {
   const [imageurl, setimageurl] = useState(null);
   const [selectedFile, setUploadFile] = useState(null);
-  const [progess, setProgress] = useState();
+  const [progress, setProgress] = useState();
 
   const storageRef = ref(storage);
   const profilePicFolderRef = ref(storageRef, "ProfilePictures");
 
   const imagesRef = ref(
     profilePicFolderRef,
-    progess === 100 ? selectedFile.name : "soundonly_1_re.jpg"
+    progress === 100 ? selectedFile.name : "soundonly_1_re.jpg"
   );
 
   getDownloadURL(imagesRef)
@@ -49,7 +49,10 @@ const UploadPicture = (props) => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const storageRef = ref(storage, `ProfilePictures/${selectedFile.name}`);
+    const storageRef = ref(
+      storage,
+      `ProfilePictures/${props.info.userID}/${selectedFile.name}`
+    );
     const uploadTask = uploadBytesResumable(storageRef, selectedFile);
     uploadTask.on("state_changed", (snapshot) => {
       const prog = Math.round(
@@ -69,15 +72,39 @@ const UploadPicture = (props) => {
     });
   };
 
+  const setAsNewProfile = (event) => {
+    event.preventDefault();
+    props.setter((prev) => ({
+      ...prev,
+      profilePicURL: `${props.info.userID}/${selectedFile.name}`,
+    }));
+
+    const messagesRef = refdb(database, "users/user");
+    const childRef = child(messagesRef, "profilePicURL");
+    set(childRef, `${props.info.userID}/${selectedFile.name}`);
+    return <Navigate to="/Profile" />;
+  };
+
   return (
     <div>
-      {imageurl != null && <img src={imageurl} alt="lolz" />}
-      <form onSubmit={handleSubmit}>
+      {imageurl != null && (
+        <img style={{ width: 300, height: 300 }} src={imageurl} alt="lolz" />
+      )}
+      <form style={{ top: 380 }} onSubmit={handleSubmit}>
         <input type="file" onChange={handleChange} />
         <br />
         <input type="submit" value="Upload" />
       </form>
-      <h3>{progess === 100 && "upload Completed"}</h3>
+      <h3 style={{ top: 400 }}>{progress === 100 && "Upload Completed"}</h3>
+      {progress === 100 && (
+        <div>
+          <form style={{ top: 450 }} onSubmit={setAsNewProfile}>
+            <label>Confirm new Profile Picture</label>
+            <br />
+            <input type="submit" value="OK" />
+          </form>
+        </div>
+      )}
     </div>
   );
 };

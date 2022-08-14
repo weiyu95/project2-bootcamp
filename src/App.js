@@ -1,8 +1,10 @@
-import React, { useDeferredValue, useEffect, useState } from "react";
+import "./App.css";
+
+import React, { useEffect, useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "./firebase";
-import "./App.css";
+import { auth, database } from "./firebase";
+import { ref, get, child, set } from "firebase/database";
 
 import { Nav } from "./Resources/NavBar";
 import { AllOrders } from "./Resources/AllOrders.js";
@@ -30,16 +32,41 @@ const App = () => {
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        setuserInfo({
-          userIsLoggedIn: true,
-          userID: user.uid,
-          userdpname: user.email,
-        });
+        const dbref = ref(database, "users");
+        get(child(dbref, user.uid))
+          .then((snapshot) => {
+            if (snapshot.exists()) {
+              setuserInfo({
+                userIsLoggedIn: true,
+                userID: user.uid,
+                userdpname: user.email,
+                profilePicURL: snapshot.val().profilePicURL,
+              });
+            } else {
+              setuserInfo({
+                userIsLoggedIn: true,
+                userID: user.uid,
+                userdpname: user.email,
+                profilePicURL: "",
+              });
+              const newUser = child(dbref, user.uid);
+              set(newUser, {
+                cart: "",
+                liked: "",
+                orderHistory: "",
+                profilePicURL: "",
+              });
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+          });
       } else {
         setuserInfo({
           userIsLoggedIn: false,
           userID: "",
           userdpname: "",
+          profilePicURL: "",
         });
       }
     });
@@ -55,7 +82,7 @@ const App = () => {
           <Route path="profile" element={<Profile info={userInfo} />} />
           <Route
             path="profile/uploadpicture"
-            element={<UploadPicture info={userInfo} />}
+            element={<UploadPicture info={userInfo} setter={setuserInfo} />}
           />
           <Route path="profile/likedproduct" element={<LikedProducts />} />
           <Route path="profile/allorders" element={<AllOrders />} />

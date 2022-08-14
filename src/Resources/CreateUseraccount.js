@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./cssfiles/login.css";
 import { Message, Password, CaretRight } from "react-iconly";
+
 import divider from "./images/Divider.png";
 import apple from "./images/Apple.png";
 import facebook from "./images/Facebook.png";
@@ -17,7 +18,7 @@ const Create = (props) => {
     event.preventDefault();
     console.log("hi");
     createUserWithEmailAndPassword(auth, username, UserPassword)
-      .then(() => {
+      .then((user) => {
         setPassword("");
       })
       .catch((err) => {
@@ -36,7 +37,7 @@ const Create = (props) => {
   return (
     <div>
       {props.info.userIsLoggedIn ? (
-        <Navigate to="/profile" replace={true} />
+        <Navigate to="/profile/uploadpicture" replace={true} />
       ) : (
         <div>
           <h1 style={{ top: 100 }}>Create Account</h1>

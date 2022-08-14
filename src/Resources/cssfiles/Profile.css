@@ -90,7 +90,8 @@ body {
 .CircleBorder {
   display: flex;
   position: relative;
-
+  width: 160px;
+  height: 160px;
   border-radius: 50%;
   border-color: aliceblue;
   border-style: solid;
