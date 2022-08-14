@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react";
 import {
   push,
   onChildAdded,
+  onChildRemoved,
   ref as databaseRef,
   update,
   set,
+  onChildChanged,
 } from "firebase/database";
 import { database } from "../firebase";
 import Card from "react-bootstrap/Card";
@@ -25,32 +27,57 @@ const Cart = ({ user }) => {
         { key: data.key, val: data.val() },
       ]);
     });
+    onChildRemoved(userRef, (data) => {
+      console.log(`${data.val().itemName} removed.`);
+      //onChildRemoved & onChildChange could not get userCartItems.
+      console.log(`current cart: ${userCartItems}`); 
+    });
   }, []);
 
-  console.log(userCartItems);
+  // useEffect(() => {
+  //   const userRef = databaseRef(database, `${USERS_FOLDER_NAME}/user/cart`);
+  //   onChildChanged(userRef, (data) => {
+  //     console.log(`data fetched by onchildchanged: ${data}`);
+  //     console.log(`before adding new cart: ${userCartItems}`);
+  //     setUserCartItems((prevState) => [
+  //       ...prevState,
+  //       { key: data.key, val: data.val() },
+  //     ]);
+  //   });
+  //   console.log(userCartItems);
+  // })
+
+  // useEffect(() => {
+  //   const userRef = databaseRef(database, `${USERS_FOLDER_NAME}/user/cart`);
+  //   onChildRemoved(userRef, (data) => {
+  //     console.log(`data: ${data}`)
+  //     const newArray = userCartItems.filter(
+  //       (cartItems) => cartItems.key !== data
+  //     );
+  //     console.log(`New array: ${newArray}`);
+  //     setUserCartItems(newArray);
+  //     console.log(`New user cart: ${userCartItems}`);
+  //   });
+  // }, []);
+
+  console.log(`logging user cart outside useEffect: ${userCartItems}`);
 
   const handleOrder = (itemOrdered) => {
     const ordersListRef = databaseRef(database, USER_ORDERS_NAME);
     const newOrderRef = push(ordersListRef);
-    const index = userCartItems.findIndex((item)=>item.key === itemOrdered)
-    console.log(index)
-    console.log(itemOrdered)
+    const index = userCartItems.findIndex((item) => item.key === itemOrdered);
+    console.log(index);
+    console.log(itemOrdered);
     set(newOrderRef, userCartItems[index]);
     handleDelete(itemOrdered);
   };
 
   const handleDelete = (itemDeleted) => {
-    console.log(itemDeleted);
-    console.log(`old cart: ${userCartItems}`);
-    const newArray = userCartItems.filter(
-      (cartItems) => cartItems.key !== itemDeleted
-    );
+    const newArray = userCartItems.filter((cartItems) => cartItems.key !== itemDeleted)
     setUserCartItems(newArray);
-    console.log(`newArray: ${newArray}`);
-    console.log(`new cart: ${userCartItems}`)
     const updates = {};
     updates[`/${USERS_FOLDER_NAME}/user/cart/${itemDeleted}`] = null;
-    return update(databaseRef(database), updates);
+    update(databaseRef(database), updates);
   };
 
   let cartCards = userCartItems.map((item) => (
