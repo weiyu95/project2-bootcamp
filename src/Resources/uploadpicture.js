@@ -87,6 +87,7 @@ const UploadPicture = (props) => {
 
   return (
     <div>
+      <label>Upload a new Profile Picture</label>
       {imageurl != null && (
         <img style={{ width: 300, height: 300 }} src={imageurl} alt="lolz" />
       )}
