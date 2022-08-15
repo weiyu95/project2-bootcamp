@@ -6,11 +6,11 @@ import {
   ref as databaseRef,
   update,
   set,
-  onChildChanged,
 } from "firebase/database";
 import { database } from "../firebase";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
+import divider from "./images/NavBar Divider.svg";
 import { Outlet, Link } from "react-router-dom";
 
 const USERS_FOLDER_NAME = "users";
@@ -30,7 +30,7 @@ const Cart = ({ user }) => {
     onChildRemoved(userRef, (data) => {
       console.log(`${data.val().itemName} removed.`);
       //onChildRemoved & onChildChange could not get userCartItems.
-      console.log(`current cart: ${userCartItems}`); 
+      console.log(`current cart: ${userCartItems}`);
     });
   }, []);
 
@@ -73,7 +73,9 @@ const Cart = ({ user }) => {
   };
 
   const handleDelete = (itemDeleted) => {
-    const newArray = userCartItems.filter((cartItems) => cartItems.key !== itemDeleted)
+    const newArray = userCartItems.filter(
+      (cartItems) => cartItems.key !== itemDeleted
+    );
     setUserCartItems(newArray);
     const updates = {};
     updates[`/${USERS_FOLDER_NAME}/user/cart/${itemDeleted}`] = null;
@@ -81,14 +83,14 @@ const Cart = ({ user }) => {
   };
 
   let cartCards = userCartItems.map((item) => (
-    <Card style={{ width: "18rem", position: "center" }} key={item.key}>
+    <Card border="danger" style={{ width: "18rem" }} key={item.key}>
       <Card.Img variant="top" src={item.val.imageLink} />
       <Card.Body>
         <Card.Title>{item.val.itemName}</Card.Title>
         <Card.Subtitle className="mb-2 text-muted">
           ${item.val.itemPrice}
         </Card.Subtitle>
-        <Card.Text style={{ fontSize: 20 }}>
+        <Card.Text style={{ fontSize: 12 }}>
           {item.val.itemDescription}
         </Card.Text>
         <Button variant="primary" onClick={() => handleOrder(item.key)}>
@@ -101,7 +103,13 @@ const Cart = ({ user }) => {
     </Card>
   ));
 
-  return cartCards;
+  return (
+    <div>
+      <label className="title">Cart</label>
+      <img className="divider" src={divider} alt="divider" />
+      {cartCards}
+    </div>
+  );
 };
 
 export { Cart };
