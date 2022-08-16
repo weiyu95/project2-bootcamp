@@ -8,10 +8,17 @@ import {
   set,
 } from "firebase/database";
 import { database } from "../firebase";
+import { Outlet, Link } from "react-router-dom";
+import divider from "./images/NavBar Divider.svg";
+import "./cssfiles/Profile.css";
+//***imports from react-bootstrap***
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
-import divider from "./images/NavBar Divider.svg";
-import { Outlet, Link } from "react-router-dom";
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+//***imports from react-iconly***
+import { CaretLeft } from "react-iconly";
 
 const USERS_FOLDER_NAME = "users";
 const USER_ORDERS_NAME = `${USERS_FOLDER_NAME}/user/orders`;
@@ -60,7 +67,8 @@ const Cart = ({ user }) => {
   //   });
   // }, []);
 
-  console.log(`logging user cart outside useEffect: ${userCartItems}`);
+  console.log("logging user cart outside useEffect:");
+  console.log(userCartItems)
 
   const handleOrder = (itemOrdered) => {
     const ordersListRef = databaseRef(database, USER_ORDERS_NAME);
@@ -104,11 +112,20 @@ const Cart = ({ user }) => {
   ));
 
   return (
-    <div>
-      <label className="title">Cart</label>
-      <img className="divider" src={divider} alt="divider" />
+    <Container>
+      <Row>
+        <Col>
+          <Link to="/newsfeed">
+            <CaretLeft set="bold" primaryColor="#2FF522" />
+          </Link>
+        </Col>
+        <Col>
+          <label>Cart</label>
+        </Col>
+        <img className="divider" src={divider} alt="divider" />
+      </Row>
       {cartCards}
-    </div>
+    </Container>
   );
 };
 
