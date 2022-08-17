@@ -9,10 +9,11 @@ import {
 } from "firebase/database";
 import { database } from "../firebase";
 import { Outlet, Link } from "react-router-dom";
+import "./cssfiles/Cart.css";
+//***imports from images folder***
 import divider from "./images/NavBar Divider.svg";
 import deletesvg from "./images/Delete.svg";
 import walletsvg from "./images/Wallet.svg";
-import "./cssfiles/Cart.css";
 //***imports from react-bootstrap***
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
@@ -71,24 +72,22 @@ const Cart = ({ user }) => {
     <Card className="cartBox" key={item.key}>
       <Card.Img variant="top" src={item.val.imageLink} />
       <Card.Body>
-        <Card.Title style={{ fontSize: 30 }}>{item.val.itemName}</Card.Title>
-        <Card.Subtitle style={{ fontSize: 20}}>
-          ${item.val.itemPrice}
-        </Card.Subtitle>
+        <Card.Title>{item.val.itemName}</Card.Title>
+        <Card.Subtitle>${item.val.itemPrice}</Card.Subtitle>
         <Card.Text style={{ fontSize: 15 }}>
           {item.val.itemDescription}
         </Card.Text>
         <Button
           className="buttonBox"
           variant="primary"
-          onClick={() => handleOrder(item.key)}
+          onClick={(event) => handleOrder(item.key, event)}
         >
           <img src={walletsvg} alt="Wallet svg" /> Order
         </Button>
         <Button
           className="buttonBox"
           variant="primary"
-          onClick={() => handleDelete(item.key)}
+          onClick={(event) => handleDelete(item.key, event)}
         >
           <img src={deletesvg} alt="Delete svg" /> Delete
         </Button>
