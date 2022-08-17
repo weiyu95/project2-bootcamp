@@ -1,0 +1,94 @@
+/* .cartBody {
+  position: relative;
+  width: 390px;
+  height: 812px;
+  padding: 0%;
+  background: #5a2762;
+  margin: 0%;
+} */
+
+.cartPage {
+  /* Same as profile */
+  /* Auto layout */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  width: auto;
+  height: auto;
+  filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+  border-radius: 0px;
+}
+
+.cartTitleBar {
+  position: absolute;
+  top: 0;
+  margin: 5%;
+  width: auto;
+  height: 28px;
+
+  list-style: none;
+  display: flex;
+  flex-flow: row;
+  align-items: left;
+}
+
+.cartTitle {
+  margin-left: 5%;
+  text-align: left;
+  width: 288px;
+  height: 19px;
+  font-family: "Noto Serif JP";
+  font-style: italic;
+  font-stretch: expanded;
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 120%;
+  /* or 19px */
+
+  color: #2ff522;
+
+  /* Inside auto layout */
+
+  flex: none;
+  order: 1;
+  flex-grow: 1;
+}
+
+.cartDivider {
+  margin-top: 14.5%;
+  margin-left: auto;
+}
+
+.cartCenterViewBox {
+  position: relative;
+  justify-content: center;
+  align-content: center;
+}
+
+.cartBox {
+  margin: auto;
+  margin-top: 20px;
+  width: 319px;
+  height: 18rem;
+  background: #e94c00;
+  border-radius: 35px;
+  border-color: aliceblue;
+  border-style: solid;
+  border-width: 10px;
+  font-family: "Noto Serif JP";
+  font-style: italic;
+}
+
+.buttonBox {
+  background: #2ff522;
+  font-family: "Noto Serif JP";
+  font-style: italic;
+  font-weight: 500;
+  font-size: 20px;
+  border-color: aliceblue;
+  border-style: solid;
+  border-radius: 35px;
+  border-width: 3px;
+  margin: 5%;
+}

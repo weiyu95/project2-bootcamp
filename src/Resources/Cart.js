@@ -10,13 +10,14 @@ import {
 import { database } from "../firebase";
 import { Outlet, Link } from "react-router-dom";
 import divider from "./images/NavBar Divider.svg";
-import "./cssfiles/Profile.css";
+import deletesvg from "./images/Delete.svg";
+import walletsvg from "./images/Wallet.svg";
+import "./cssfiles/Cart.css";
 //***imports from react-bootstrap***
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
 //***imports from react-iconly***
 import { CaretLeft } from "react-iconly";
 
@@ -34,43 +35,22 @@ const Cart = ({ user }) => {
         { key: data.key, val: data.val() },
       ]);
     });
+  }, []);
+
+  useEffect(() => {
+    const userRef = databaseRef(database, `${USERS_FOLDER_NAME}/user/cart`);
     onChildRemoved(userRef, (data) => {
-      console.log(`${data.val().itemName} removed.`);
-      //onChildRemoved & onChildChange could not get userCartItems.
-      console.log(`current cart: ${userCartItems}`);
+      setUserCartItems((prev) => {
+        return prev.filter((cartItems) => cartItems.key !== data.key);
+      });
     });
   }, []);
 
-  // useEffect(() => {
-  //   const userRef = databaseRef(database, `${USERS_FOLDER_NAME}/user/cart`);
-  //   onChildChanged(userRef, (data) => {
-  //     console.log(`data fetched by onchildchanged: ${data}`);
-  //     console.log(`before adding new cart: ${userCartItems}`);
-  //     setUserCartItems((prevState) => [
-  //       ...prevState,
-  //       { key: data.key, val: data.val() },
-  //     ]);
-  //   });
-  //   console.log(userCartItems);
-  // })
-
-  // useEffect(() => {
-  //   const userRef = databaseRef(database, `${USERS_FOLDER_NAME}/user/cart`);
-  //   onChildRemoved(userRef, (data) => {
-  //     console.log(`data: ${data}`)
-  //     const newArray = userCartItems.filter(
-  //       (cartItems) => cartItems.key !== data
-  //     );
-  //     console.log(`New array: ${newArray}`);
-  //     setUserCartItems(newArray);
-  //     console.log(`New user cart: ${userCartItems}`);
-  //   });
-  // }, []);
-
   console.log("logging user cart outside useEffect:");
-  console.log(userCartItems)
+  console.log(userCartItems);
 
-  const handleOrder = (itemOrdered) => {
+  const handleOrder = (itemOrdered, event) => {
+    event.preventDefault();
     const ordersListRef = databaseRef(database, USER_ORDERS_NAME);
     const newOrderRef = push(ordersListRef);
     const index = userCartItems.findIndex((item) => item.key === itemOrdered);
@@ -80,51 +60,54 @@ const Cart = ({ user }) => {
     handleDelete(itemOrdered);
   };
 
-  const handleDelete = (itemDeleted) => {
-    const newArray = userCartItems.filter(
-      (cartItems) => cartItems.key !== itemDeleted
-    );
-    setUserCartItems(newArray);
+  const handleDelete = (itemDeleted, event) => {
+    event.preventDefault();
     const updates = {};
     updates[`/${USERS_FOLDER_NAME}/user/cart/${itemDeleted}`] = null;
     update(databaseRef(database), updates);
   };
 
   let cartCards = userCartItems.map((item) => (
-    <Card border="danger" style={{ width: "18rem" }} key={item.key}>
+    <Card className="cartBox" key={item.key}>
       <Card.Img variant="top" src={item.val.imageLink} />
       <Card.Body>
-        <Card.Title>{item.val.itemName}</Card.Title>
-        <Card.Subtitle className="mb-2 text-muted">
+        <Card.Title style={{ fontSize: 30 }}>{item.val.itemName}</Card.Title>
+        <Card.Subtitle style={{ fontSize: 20}}>
           ${item.val.itemPrice}
         </Card.Subtitle>
-        <Card.Text style={{ fontSize: 12 }}>
+        <Card.Text style={{ fontSize: 15 }}>
           {item.val.itemDescription}
         </Card.Text>
-        <Button variant="primary" onClick={() => handleOrder(item.key)}>
-          Order
+        <Button
+          className="buttonBox"
+          variant="primary"
+          onClick={() => handleOrder(item.key)}
+        >
+          <img src={walletsvg} alt="Wallet svg" /> Order
         </Button>
-        <Button variant="primary" onClick={() => handleDelete(item.key)}>
-          Remove
+        <Button
+          className="buttonBox"
+          variant="primary"
+          onClick={() => handleDelete(item.key)}
+        >
+          <img src={deletesvg} alt="Delete svg" /> Delete
         </Button>
       </Card.Body>
     </Card>
   ));
 
   return (
-    <Container>
-      <Row>
-        <Col>
-          <Link to="/newsfeed">
-            <CaretLeft set="bold" primaryColor="#2FF522" />
-          </Link>
-        </Col>
-        <Col>
-          <label>Cart</label>
-        </Col>
-        <img className="divider" src={divider} alt="divider" />
+    <Container className="cartPage">
+      <Row className="cartTitleBar">
+        <Link to="/newsfeed">
+          <CaretLeft set="bold" primaryColor="#2FF522" />
+        </Link>
+        <label className="cartTitle">Cart</label>
       </Row>
-      {cartCards}
+      <Row className="cartDivider">
+        <img src={divider} alt="divider" />
+      </Row>
+      <div className="cartCenterViewBox">{cartCards}</div>
     </Container>
   );
 };
