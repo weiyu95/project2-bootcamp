@@ -1,27 +1,24 @@
 import React, { useState } from "react";
 import "./cssfiles/login.css";
 import { Message, Password, CaretRight } from "react-iconly";
+
 import divider from "./images/Divider.png";
 import apple from "./images/Apple.png";
 import facebook from "./images/Facebook.png";
 import google from "./images/Google.png";
 import { Link, Navigate } from "react-router-dom";
 import { auth } from "../firebase";
-import {
-  signInWithEmailAndPassword,
-  sendPasswordResetEmail,
-} from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 
-
-const Login = (props) => {
+const Create = (props) => {
   const [username, setUsername] = useState(null);
   const [UserPassword, setPassword] = useState("");
 
   const handleSubmit = (event) => {
     event.preventDefault();
     console.log("hi");
-    signInWithEmailAndPassword(auth, username, UserPassword)
-      .then(() => {
+    createUserWithEmailAndPassword(auth, username, UserPassword)
+      .then((user) => {
         setPassword("");
       })
       .catch((err) => {
@@ -37,24 +34,16 @@ const Login = (props) => {
     }
   };
 
-  const resetPassword = () => {
-    sendPasswordResetEmail(auth, username)
-      .then(() =>
-        window.alert("Please Check your email to reset your password")
-      )
-      .catch((err) => window.alert("Enter your username"));
-  };
-
   return (
     <div>
       {props.info.userIsLoggedIn ? (
-        <Navigate to="/profile" replace={true} />
+        <Navigate to="/profile/uploadpicture" replace={true} />
       ) : (
         <div>
-          <h1>Log in</h1>
-          <h3>Don't have a account?</h3>
-          <Link to="/createaccount">
-            <h5>Sign up now</h5>
+          <h1 style={{ top: 100 }}>Create Account</h1>
+          <h3>Already have an account?</h3>
+          <Link to="/Login">
+            <h5>Sign in</h5>
           </Link>
           <div className="userAuthBox">
             <ul className="AuthDetailsHolder">
@@ -97,7 +86,6 @@ const Login = (props) => {
               </li>
             </ul>
           </div>
-          <h4 onClick={resetPassword}>Forgot Password?</h4>
           <img className="cont" src={divider} alt="oops" />
           <ul className="socialMlogin">
             <li>
@@ -116,4 +104,4 @@ const Login = (props) => {
   );
 };
 
-export { Login };
+export { Create };

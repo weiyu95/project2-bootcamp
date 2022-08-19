@@ -1,18 +1,17 @@
-import React, { useDeferredValue, useState, useEffect } from "react";
-import { Routes, Route } from "react-router-dom";
-import {
-  createUserWithEmailAndPassword,
-  onAuthStateChanged,
-} from "firebase/auth";
-import { auth } from "./firebase";
 import "./App.css";
+
+import React, { useEffect, useState } from "react";
+import { Routes, Route } from "react-router-dom";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth, database } from "./firebase";
+import { ref, get, child, set } from "firebase/database";
 
 import { Nav } from "./Resources/NavBar";
 import { AllOrders } from "./Resources/AllOrders.js";
 import { Cart } from "./Resources/Cart.js";
-import { ChangePassword } from "./Resources/ChangePassword.js";
 import { LikedProducts } from "./Resources/LikedProducts.js";
 import { Login } from "./Resources/Login.js";
+import { Create } from "./Resources/CreateUseraccount.js";
 import { Newsfeed } from "./Resources/Newsfeed";
 import { OrderHistory } from "./Resources/OrderHistory.js";
 import { PaymentMethod } from "./Resources/PaymentMethod.js";
@@ -27,12 +26,41 @@ const App = () => {
     userIsLoggedIn: false,
     userID: "",
     userdpname: "",
-    username: "",
+    profilePicURL: "",
   });
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
+        const dbref = ref(database, "users");
+        get(child(dbref, user.uid))
+          .then((snapshot) => {
+            if (snapshot.exists()) {
+              setuserInfo({
+                userIsLoggedIn: true,
+                userID: user.uid,
+                userdpname: user.email,
+                profilePicURL: snapshot.val().profilePicURL,
+              });
+            } else {
+              setuserInfo({
+                userIsLoggedIn: true,
+                userID: user.uid,
+                userdpname: user.email,
+                profilePicURL: "",
+              });
+              const newUser = child(dbref, user.uid);
+              set(newUser, {
+                cart: "",
+                liked: "",
+                orderHistory: "",
+                profilePicURL: "",
+              });
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+
         setuserInfo({
           userIsLoggedIn: true,
           userID: user.uid,
@@ -48,7 +76,8 @@ const App = () => {
           userIsLoggedIn: false,
           userID: "",
           userdpname: "",
-          username: "",
+          profilePicURL: "",
+
         });
       }
     });
@@ -60,9 +89,12 @@ const App = () => {
         <Route path="/" element={<Nav info={userInfo} />}>
           <Route path="newsfeed" element={<Newsfeed />} />
           <Route path="login" element={<Login info={userInfo} />} />
+          <Route path="createaccount" element={<Create info={userInfo} />} />
           <Route path="profile" element={<Profile info={userInfo} />} />
-          <Route path="profile/uploadpicture" element={<UploadPicture />} />
-          <Route path="profile/changepassword" element={<ChangePassword />} />
+          <Route
+            path="profile/uploadpicture"
+            element={<UploadPicture info={userInfo} setter={setuserInfo} />}
+          />
           <Route path="profile/likedproduct" element={<LikedProducts />} />
           <Route path="profile/allorders" element={<AllOrders />} />
           <Route

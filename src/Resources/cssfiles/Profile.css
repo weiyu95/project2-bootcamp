@@ -90,7 +90,8 @@ body {
 .CircleBorder {
   display: flex;
   position: relative;
-
+  width: 160px;
+  height: 160px;
   border-radius: 50%;
   border-color: aliceblue;
   border-style: solid;
@@ -117,6 +118,15 @@ body {
   list-style-type: none;
   padding-inline-start: 0%;
   color: #2e2c51;
+}
+
+.ChangePwd {
+  position: absolute;
+  top: 330px;
+  font-weight: bold;
+  padding-top: 2%;
+  color: #2e2c51;
+  text-decoration: underline;
 }
 
 .label {
