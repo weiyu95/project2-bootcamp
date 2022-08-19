@@ -49,6 +49,12 @@ const UploadPicture = (props) => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    if (selectedFile == null) {
+      window.alert(
+        "Please choose file to upload or click on the profile button on the navtab to continue without a profile pic"
+      );
+      return;
+    }
     const storageRef = ref(
       storage,
       `ProfilePictures/${props.info.userID}/${selectedFile.name}`
