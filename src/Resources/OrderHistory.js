@@ -6,3 +6,8 @@ const OrderHistory = () => {
 };
 
 export { OrderHistory };
+
+// what is displayed in Order History?
+// - Past purchases (Displayed as Card object)
+// what is displayed in each Past purchase card?
+// - Seller Name, Item Image, Item Name, Item Price, Item Quantity, Order Total, Delivery Status

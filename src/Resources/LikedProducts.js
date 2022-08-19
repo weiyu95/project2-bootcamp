@@ -6,3 +6,8 @@ const LikedProducts = () => {
 };
 
 export { LikedProducts };
+
+// what is displayed in Liked Products?
+// - Items that user is interested but not buying at the moment (Display as Card object)
+// what is displayed in each Liked Product Card object?
+// - Seller Name, Item Image, Item Name, Item Price, Add to Cart buttion

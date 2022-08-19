@@ -60,13 +60,24 @@ const App = () => {
           })
           .catch((error) => {
             console.error(error);
-          });
+
+        setuserInfo({
+          userIsLoggedIn: true,
+          userID: user.uid,
+          userdpname: user.email,
+          username: () => {
+            const index = user.email.indexOf("@");
+            var userid = user.email.substring(0, index);
+            return userid;
+          },
+        });
       } else {
         setuserInfo({
           userIsLoggedIn: false,
           userID: "",
           userdpname: "",
           profilePicURL: "",
+
         });
       }
     });
