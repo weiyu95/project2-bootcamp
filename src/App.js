@@ -61,6 +61,7 @@ const App = () => {
           })
           .catch((error) => {
             console.error(error);
+          });
 
         setuserInfo({
           userIsLoggedIn: true,
@@ -78,7 +79,6 @@ const App = () => {
           userID: "",
           userdpname: "",
           profilePicURL: "",
-
         });
       }
     });

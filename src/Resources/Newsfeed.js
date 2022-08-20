@@ -2,48 +2,65 @@ import React, { useState } from "react";
 import { storage } from "../firebase";
 import { ref, getDownloadURL } from "firebase/storage";
 import "./cssfiles/Newsfeed.css";
-import { User } from "react-iconly";
+import { User, Heart } from "react-iconly";
 import sample from "./images/Gendou card.png";
 
 import { Outlet, Link } from "react-router-dom";
 
 const Newsfeed = (props) => {
   const [imageurl, setimageurl] = useState(null);
-  const storageRef = ref(storage);
-  const profilePicFolderRef = ref(storageRef, "ProfilePictures");
 
   if (props.info.profilePicURL !== "") {
-    const imagesRef = ref(profilePicFolderRef, props.info.profilePicURL);
+    const imagesRef = ref(
+      storage,
+      `ProfilePictures/${props.info.userID}/${props.info.profilePicURL}`
+    );
     getDownloadURL(imagesRef)
       .then((url) => {
         setimageurl(url);
       })
-      .catch((error) => {
-        // A full list of error codes is available at
-        // https://firebase.google.com/docs/storage/web/handle-errors
-        switch (error.code) {
-          case "storage/object-not-found":
-            window.alert("File doesn't exist"); // File doesn't exist
-            break;
-          case "storage/unauthorized":
-            window.alert("User doesn't have permission to access the object"); // User doesn't have permission to access the object
-            break;
-          case "storage/canceled":
-            window.alert("User canceled the upload"); // User canceled the upload
-            break;
-          case "storage/unknown":
-            window.alert("Unknown error occurred, inspect the server response"); // Unknown error occurred, inspect the server response
-            break;
-          default:
-            window.alert("critical error");
-            break;
-        }
-      });
+      .catch((error) => {});
   }
+
   const itemcard = () => {
     return (
       <div>
-        <img src={sample} alt="oops" />
+        <ul className="InstaCard">
+          <li>
+            <ul className="ItemTitleBanner">
+              <li>
+                {imageurl != null ? (
+                  <img className="smallerpp" src={imageurl} alt="lolz" />
+                ) : (
+                  <div className="smallerpp">
+                    <User
+                      className="userNotLogin"
+                      set="bold"
+                      primaryColor="black"
+                    />
+                  </div>
+                )}
+              </li>
+              <li style={{ marginTop: 5 }}>{props.info.userdpname}</li>
+            </ul>
+          </li>
+          <li className="productpic">
+            <img className="pic" src={sample} alt="opps" />
+            <div className="likebtn">
+              <Heart set="bold" primaryColor="blueviolet" />
+            </div>
+          </li>
+          <li className="ItemTitle">Get in the Robot</li>
+          <li className="ItemDescrip">useless</li>
+          <li>
+            <ul className="pricetable">
+              <li>
+                <button className="CartAdd">Add to cart</button>
+              </li>
+              <li style={{ marginTop: 5, marginRight: 5 }}>$46,200</li>
+            </ul>
+          </li>
+        </ul>
       </div>
     );
   };
@@ -69,8 +86,9 @@ const Newsfeed = (props) => {
         </li>
       </ul>
       <div>{itemcard()}</div>
+
       <div>{itemcard()}</div>
-      <div>{itemcard()}</div>
+
       <div>{itemcard()}</div>
     </div>
   );

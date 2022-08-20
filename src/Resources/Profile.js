@@ -11,11 +11,12 @@ import divider from "./images/NavBar Divider.svg";
 
 const Profile = (props) => {
   const [imageurl, setimageurl] = useState(null);
-  const storageRef = ref(storage);
-  const profilePicFolderRef = ref(storageRef, "ProfilePictures");
 
   if (props.info.profilePicURL !== "") {
-    const imagesRef = ref(profilePicFolderRef, props.info.profilePicURL);
+    const imagesRef = ref(
+      storage,
+      `ProfilePictures/${props.info.userID}/${props.info.profilePicURL}`
+    );
     getDownloadURL(imagesRef)
       .then((url) => {
         setimageurl(url);
