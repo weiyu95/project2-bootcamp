@@ -55,11 +55,13 @@ const App = () => {
                 liked: "",
                 orderHistory: "",
                 profilePicURL: "",
+                userdpname: user.email.toString(),
               });
             }
           })
           .catch((error) => {
             console.error(error);
+          });
 
         setuserInfo({
           userIsLoggedIn: true,
@@ -77,7 +79,6 @@ const App = () => {
           userID: "",
           userdpname: "",
           profilePicURL: "",
-
         });
       }
     });
@@ -87,7 +88,7 @@ const App = () => {
     <div>
       <Routes>
         <Route path="/" element={<Nav info={userInfo} />}>
-          <Route path="newsfeed" element={<Newsfeed />} />
+          <Route path="newsfeed" element={<Newsfeed info={userInfo} />} />
           <Route path="login" element={<Login info={userInfo} />} />
           <Route path="createaccount" element={<Create info={userInfo} />} />
           <Route path="profile" element={<Profile info={userInfo} />} />

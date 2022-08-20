@@ -8,8 +8,8 @@ const Nav = (props) => {
   return (
     <>
       <Outlet />
-      <div className="navbar">
-        <ul className="navbar li">
+      <div className="btmbar">
+        <ul className="btmbar li">
           <li>
             <Link to="/newsfeed">
               <Home

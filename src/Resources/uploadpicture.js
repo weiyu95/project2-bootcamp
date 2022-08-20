@@ -49,6 +49,12 @@ const UploadPicture = (props) => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    if (selectedFile == null) {
+      window.alert(
+        "Please choose file to upload or click on the profile button on the navtab to continue without a profile pic"
+      );
+      return;
+    }
     const storageRef = ref(
       storage,
       `ProfilePictures/${props.info.userID}/${selectedFile.name}`
@@ -76,12 +82,12 @@ const UploadPicture = (props) => {
     event.preventDefault();
     props.setter((prev) => ({
       ...prev,
-      profilePicURL: `${props.info.userID}/${selectedFile.name}`,
+      profilePicURL: `${selectedFile.name}`,
     }));
 
-    const messagesRef = refdb(database, "users/user");
+    const messagesRef = refdb(database, `users/${props.info.userID}`);
     const childRef = child(messagesRef, "profilePicURL");
-    set(childRef, `${props.info.userID}/${selectedFile.name}`);
+    set(childRef, `${selectedFile.name}`);
     return <Navigate to="/Profile" />;
   };
 
