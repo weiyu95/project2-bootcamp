@@ -105,7 +105,7 @@ const App = () => {
           <Route path="profile/orderhistory" element={<OrderHistory />} />
           <Route path="profile/paymentmethod" element={<PaymentMethod />} />
           <Route path="search" element={<Search />} />
-          <Route path="upload" element={<Upload />} />
+          <Route path="upload" element={<Upload info={userInfo} />} />
           <Route path="cart" element={<Cart />} />
         </Route>
       </Routes>
