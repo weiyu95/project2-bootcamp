@@ -14,7 +14,7 @@ import "./cssfiles/AllOrders.css";
 import divider from "./images/NavBar Divider.svg";
 import infosquaresvg from "./images/InfoSquare.svg";
 //***imports from react-bootstrap***
-import "bootstrap/dist/css/bootstrap.min.css";
+// import "bootstrap/dist/css/bootstrap.min.css";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";

@@ -1,13 +1,13 @@
-/* .cartBody {
+body {
   position: relative;
   width: 390px;
   height: 812px;
   padding: 0%;
   background: #5a2762;
   margin: 0%;
-} */
+}
 
-.cartPage {
+.uploadPage {
   /* Same as profile */
   /* Auto layout */
   display: flex;
@@ -20,7 +20,7 @@
   border-radius: 0px;
 }
 
-.cartTitleBar {
+.uploadTitleBar {
   position: absolute;
   top: 0;
   margin: 5%;
@@ -33,7 +33,7 @@
   align-items: left;
 }
 
-.cartTitle {
+.uploadTitle {
   margin-left: 5%;
   text-align: left;
   width: 288px;
@@ -55,9 +55,9 @@
   flex-grow: 1;
 }
 
-.cartDivider {
+.uploadDivider {
   margin-top: 14.5%;
-  margin-left: auto;
+  margin-left: 0;
 }
 
 .cartCenterViewBox {
@@ -66,31 +66,90 @@
   align-content: center;
 }
 
-.cartBox {
+.bodyBox {
   margin: auto;
   margin-top: 20px;
   width: 319px;
-  height: 300px;
+  height: auto;
   background: #e94c00;
   border-radius: 35px;
   border-color: aliceblue;
-  border-style: solid;
+  border-style: groove;
   border-width: 10px;
-  font-size: 20px;
+  font-size: 15px;
   font-family: "Noto Serif JP";
   font-style: italic;
+  display: block;
+  align-content: center;
 }
 
-.cartImage{
-  position:relative;
-  object-fit: contain;
-  width: auto;
-  height:100px;
-  padding: 3%;
+.titleLabel {
+  padding-top: 2%;
+  display: block;
+  align-self: center;
+  color: black;
+  list-style-type: none;
+  font-family: "Noto Serif JP";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 22px;
+}
+
+.uploadLabel {
+  padding-top: 2%;
+  display: block;
+  align-self: center;
+  color: black;
+  list-style-type: none;
+  font-family: "Noto Serif JP";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 22px;
+}
+
+.inputBox {
+  position: relative;
+  width: 300px;
+  height: auto;
+  padding: 1%;
+  margin: 3% auto;
+  background-color: #e94c00;
+  border-radius: 10px;
+  border-style: solid;
+  border-color: aliceblue;
+  border-width: 2px;
+  
+}
+
+.currency-wrap {
+  position: relative;
+}
+
+.currency-code {
+  position: absolute;
+  color: black;
+  left: 55px;
+  top:9px;
+}
+
+.textBox {
+  padding: 10px 20px;
+  border: solid 1px #ccc;
+  border-radius: 5px;
+  font-family: "Noto Serif JP";
+}
+
+textarea {
+  resize: none;
+  padding: 10px 20px;
+  border: solid 1px #ccc;
+  border-radius: 5px;
+  font-family: "Noto Serif JP";
 }
 
 .buttonBox {
-  position: relative;
   background: #2ff522;
   width: 120px;
   font-family: "Noto Serif JP";

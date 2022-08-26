@@ -6,9 +6,13 @@ import {
   ref as databaseRef,
   update,
   set,
+  get,
+  equalTo,
+  onValue,
+  DataSnapshot,
 } from "firebase/database";
 import { database } from "../firebase";
-import { Outlet, Link } from "react-router-dom";
+import { Outlet, Link, Navigate } from "react-router-dom";
 import "./cssfiles/Cart.css";
 //***imports from images folder***
 import divider from "./images/NavBar Divider.svg";
@@ -23,36 +27,53 @@ import Row from "react-bootstrap/Row";
 import { CaretLeft } from "react-iconly";
 
 const USERS_FOLDER_NAME = "users";
-const USER_ORDERS_NAME = `${USERS_FOLDER_NAME}/user/orders`;
-
-const Cart = ({ user }) => {
+const ITEMS_FOLDER_NAME = "items";
+const USER_CART_NAME = "cart";
+const USER_ORDERS_NAME = "orders";
+const Cart = (props) => {
   const [userCartItems, setUserCartItems] = useState([]);
+  const [itemData, setItemData] = useState([]);
 
   useEffect(() => {
-    const userRef = databaseRef(database, `${USERS_FOLDER_NAME}/user/cart`);
-    onChildAdded(userRef, (data) => {
-      setUserCartItems((prevState) => [
-        ...prevState,
-        { key: data.key, val: data.val() },
-      ]);
+    const cartRef = databaseRef(
+      database,
+      `${USERS_FOLDER_NAME}/${props.info.userID}/${USER_CART_NAME}`
+    );
+    onChildAdded(cartRef, (data) => {
+      setUserCartItems((prevState) => [...prevState, { key: data.key }]);
     });
   }, []);
 
   useEffect(() => {
-    const userRef = databaseRef(database, `${USERS_FOLDER_NAME}/user/cart`);
-    onChildRemoved(userRef, (data) => {
+    const itemsRef = databaseRef(database, ITEMS_FOLDER_NAME);
+    onChildAdded(itemsRef, (data) => {
+      setItemData((prev) => [...prev, { key: data.key, val: data.val() }]);
+    });
+  }, []);
+
+  console.log(itemData);
+
+  useEffect(() => {
+    const cartRef = databaseRef(
+      database,
+      `${USERS_FOLDER_NAME}/${props.info.userID}/${USER_CART_NAME}`
+    );
+    onChildRemoved(cartRef, (data) => {
       setUserCartItems((prev) => {
         return prev.filter((cartItems) => cartItems.key !== data.key);
       });
     });
   }, []);
 
-  console.log("logging user cart outside useEffect:");
-  console.log(userCartItems);
+  // console.log("logging user cart outside useEffect:");
+  // console.log(userCartItems);
 
   const handleOrder = (itemOrdered, event) => {
     event.preventDefault();
-    const ordersListRef = databaseRef(database, USER_ORDERS_NAME);
+    const ordersListRef = databaseRef(
+      database,
+      `${USERS_FOLDER_NAME}/${props.info.userID}/${USER_ORDERS_NAME}`
+    );
     const newOrderRef = push(ordersListRef);
     const index = userCartItems.findIndex((item) => item.key === itemOrdered);
     console.log(index);
@@ -68,46 +89,88 @@ const Cart = ({ user }) => {
     update(databaseRef(database), updates);
   };
 
-  let cartCards = userCartItems.map((item) => (
+  // const createCards = () => {
+  //   let cartCards = userCartItems.map((item) => {
+  //     return (
+  //       <Card className="cartBox" key={item.key}>
+  //         <Card.Img variant="top" src={itemData.val.itemImage} />
+  //         <Card.Body>
+  //           <Card.Title>{itemData.val.itemName}</Card.Title>
+  //           <Card.Subtitle>${itemData.val.itemPrice}</Card.Subtitle>
+  //           <Card.Text style={{ fontSize: 15 }}>
+  //             {itemData.val.itemDescription}
+  //           </Card.Text>
+  //           <Button
+  //             className="buttonBox"
+  //             variant="primary"
+  //             onClick={(event) => handleOrder(item.key, event)}
+  //           >
+  //             <img src={walletsvg} alt="Wallet svg" /> Order
+  //           </Button>
+  //           <Button
+  //             className="buttonBox"
+  //             variant="primary"
+  //             onClick={(event) => handleDelete(item.key, event)}
+  //           >
+  //             <img src={deletesvg} alt="Delete svg" /> Delete
+  //           </Button>
+  //         </Card.Body>
+  //       </Card>
+  //     );
+  //   });
+  // };
+
+  let cartCards = itemData.map((item) => (
     <Card className="cartBox" key={item.key}>
-      <Card.Img variant="top" src={item.val.imageLink} />
-      <Card.Body>
-        <Card.Title>{item.val.itemName}</Card.Title>
-        <Card.Subtitle>${item.val.itemPrice}</Card.Subtitle>
-        <Card.Text style={{ fontSize: 15 }}>
-          {item.val.itemDescription}
-        </Card.Text>
-        <Button
-          className="buttonBox"
-          variant="primary"
-          onClick={(event) => handleOrder(item.key, event)}
-        >
-          <img src={walletsvg} alt="Wallet svg" /> Order
-        </Button>
-        <Button
-          className="buttonBox"
-          variant="primary"
-          onClick={(event) => handleDelete(item.key, event)}
-        >
-          <img src={deletesvg} alt="Delete svg" /> Delete
-        </Button>
-      </Card.Body>
+        <Card.Img
+          variant="top"
+          className="cartImage"
+          src={item.val.itemImage}
+        />
+        <Card.Body >
+          <Card.Title>{item.val.itemName}</Card.Title>
+          <Card.Subtitle>${item.val.itemPrice}</Card.Subtitle>
+          <Card.Text style={{ fontSize: 15 }}>
+            {item.val.itemDescription}
+          </Card.Text>
+          <Button
+            className="buttonBox"
+            variant="primary"
+            onClick={(event) => handleOrder(item.key, event)}
+          >
+            <img src={walletsvg} alt="Wallet svg" /> Order
+          </Button>
+          <Button
+            className="buttonBox"
+            variant="primary"
+            onClick={(event) => handleDelete(item.key, event)}
+          >
+            <img src={deletesvg} alt="Delete svg" /> Delete
+          </Button>
+        </Card.Body>
     </Card>
   ));
 
   return (
-    <Container className="cartPage">
-      <Row className="cartTitleBar">
-        <Link to="/newsfeed">
-          <CaretLeft set="bold" primaryColor="#2FF522" />
-        </Link>
-        <label className="cartTitle">Cart</label>
-      </Row>
-      <Row className="cartDivider">
-        <img src={divider} alt="divider" />
-      </Row>
-      <div className="cartCenterViewBox">{cartCards}</div>
-    </Container>
+    <div>
+      {props.info.userIsLoggedIn ? (
+        <Container className="cartPage">
+          <Row className="cartTitleBar">
+            <Link to="/newsfeed">
+              <CaretLeft set="bold" primaryColor="#2FF522" />
+            </Link>
+            <label className="cartTitle">Cart</label>
+          </Row>
+          <Row className="cartDivider">
+            <img src={divider} alt="divider" />
+          </Row>
+          <div className="cartCenterViewBox">{cartCards}</div>
+          {/* {createCards()} */}
+        </Container>
+      ) : (
+        <Navigate to="/login" replace={true} />
+      )}
+    </div>
   );
 };
 

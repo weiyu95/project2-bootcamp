@@ -1,12 +1,57 @@
-import React from "react";
+import React, { useState } from "react";
+import { storage } from "../firebase";
+import { ref, getDownloadURL } from "firebase/storage";
 import { Link, Navigate } from "react-router-dom";
 import { User, CaretLeft } from "react-iconly";
 import { auth } from "../firebase";
+import { sendPasswordResetEmail } from "firebase/auth";
 import { signOut } from "firebase/auth";
 import "./cssfiles/Profile.css";
 import divider from "./images/NavBar Divider.svg";
 
 const Profile = (props) => {
+  const [imageurl, setimageurl] = useState(null);
+
+  if (props.info.profilePicURL !== "") {
+    const imagesRef = ref(
+      storage,
+      `ProfilePictures/${props.info.userID}/${props.info.profilePicURL}`
+    );
+    getDownloadURL(imagesRef)
+      .then((url) => {
+        setimageurl(url);
+      })
+      .catch((error) => {
+        // A full list of error codes is available at
+        // https://firebase.google.com/docs/storage/web/handle-errors
+        switch (error.code) {
+          case "storage/object-not-found":
+            window.alert("File doesn't exist"); // File doesn't exist
+            break;
+          case "storage/unauthorized":
+            window.alert("User doesn't have permission to access the object"); // User doesn't have permission to access the object
+            break;
+          case "storage/canceled":
+            window.alert("User canceled the upload"); // User canceled the upload
+            break;
+          case "storage/unknown":
+            window.alert("Unknown error occurred, inspect the server response"); // Unknown error occurred, inspect the server response
+            break;
+          default:
+            window.alert("critical error");
+            break;
+        }
+      });
+  }
+
+  const resetPassword = () => {
+    sendPasswordResetEmail(auth, props.info.userdpname)
+      .then(() =>
+        window.alert("Please Check your email to reset your password")
+      )
+      .catch((err) => window.alert("Enter your username"));
+  };
+
   return (
     <div>
       {props.info.userIsLoggedIn ? (
@@ -31,33 +76,32 @@ const Profile = (props) => {
               <div className="Profilebox">
                 <ul className="Profilelist">
                   <li>
-                    <div className="CircleBorder">
-                      <User
-                        className="userNotLogin"
-                        set="bold"
-                        primaryColor="black"
-                      />
-                    </div>
+                    {imageurl != null ? (
+                      <img className="CircleBorder" src={imageurl} alt="lolz" />
+                    ) : (
+                      <div className="CircleBorder">
+                        <User
+                          className="userNotLogin"
+                          set="bold"
+                          primaryColor="black"
+                        />
+                      </div>
+                    )}
                   </li>
                   <li className="changeDisplayPic">
                     <Link to="uploadpicture"> Upload New Picture</Link>
                   </li>
                   <li>
                     <ul className="UserDetails">
-                      <li className="label">UserName :</li>
-                      <li className="info">{props.info.username}</li>
-                    </ul>
-                  </li>
-                  <li>
-                    <ul className="UserDetails">
-                      <li className="label">Password :</li>
-                      <li className="info">**********</li>
+                      <li className="info">{props.info.userdpname}</li>
                     </ul>
                   </li>
                   <li className="changeDisplayPic">
-                    <Link to="changepassword"> Change Password</Link>
+                    <h3 className="ChangePwd" onClick={resetPassword}>
+                      Change Password
+                    </h3>
                   </li>
-                  <li>
+                  <li style={{ paddingTop: 5 }}>
                     <Link className="ProductsLink" to="likedproduct">
                       Liked Products
                     </Link>

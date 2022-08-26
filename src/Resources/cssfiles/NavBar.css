@@ -6,7 +6,7 @@ body {
   text-align: center;
 }
 
-.navbar {
+.btmbar {
   /* White bar at bottom of screen */
   position: fixed;
   bottom: 0;
@@ -21,7 +21,7 @@ body {
   padding-inline-start: 0%;
 }
 
-.navbar.li {
+.btmbar.li {
   margin: 0px 0px 0px 0px;
   flex-flow: row;
   justify-content: space-around;
