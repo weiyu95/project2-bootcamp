@@ -1,45 +1,117 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import {
+  push,
+  onChildAdded,
+  ref as databaseRef,
+  update,
+  set,
+  onChildChanged,
+} from "firebase/database";
+import { database } from "../firebase";
 import { Outlet, Link } from "react-router-dom";
+import "./cssfiles/AllOrders.css";
+//***imports from images folder***
+import divider from "./images/NavBar Divider.svg";
+import infosquaresvg from "./images/InfoSquare.svg";
+//***imports from react-bootstrap***
+// import "bootstrap/dist/css/bootstrap.min.css";
 import Card from "react-bootstrap/Card";
-import ListGroup from "react-bootstrap/ListGroup";
+import Button from "react-bootstrap/Button";
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+// import Col from "react-bootstrap/Col";
+// import Nav from "react-bootstrap/Nav";
+//***imports from react-iconly***
+import { CaretLeft } from "react-iconly";
 
-const createData = (sellerId, shippingDate, orderStatus) => {
-  return { sellerId, shippingDate, orderStatus };
-};
+const USERS_FOLDER_NAME = "users";
+const USER_ORDERS_NAME = `${USERS_FOLDER_NAME}/user/orders`;
 
-const orders = [
-  createData(1, "20/07/2022", "Ready for shipment"),
-  createData(2, "22/07/2022", "QC inspection"),
-  createData(3, "25/07/2022", "In Production"),
-  createData(4, "30/07/2022", "In Production"),
-  createData(5, "01/08/2022", "Preparing Material"),
-];
+const AllOrders = ({ user }) => {
+  const [userOrderItems, setUserOrderItems] = useState([]);
 
-const AllOrders = () => {
+  useEffect(() => {
+    const userRef = databaseRef(database, `${USERS_FOLDER_NAME}/user/orders`);
+    onChildAdded(userRef, (data) => {
+      setUserOrderItems((prevState) => [
+        ...prevState,
+        { key: data.key, val: data.val() },
+      ]);
+    });
+  }, []);
+
+  //When order status changed to completed, move the completed orders to Orders History page and update All Orders Page.
+  useEffect(() => {
+    const userRef = databaseRef(database, `${USERS_FOLDER_NAME}/user/orders`);
+    onChildChanged(userRef, (data) => {
+      setUserOrderItems((prev) => {
+        return prev.filter((cartItems) => cartItems.key !== data.key);
+      });
+    });
+  }, []);
+  
+  const handleTrackOrder = (itemOrdered, event) => {
+    event.preventDefault();
+    const ordersListRef = databaseRef(database, USER_ORDERS_NAME);
+    const newOrderRef = push(ordersListRef);
+    const index = userOrderItems.findIndex((item) => item.key === itemOrdered);
+    console.log(index);
+    console.log(itemOrdered);
+    set(newOrderRef, userOrderItems[index]);
+  };
+
+  let orderCards = userOrderItems.map((item) => (
+    <Card className="allOrdersBox" key={item.key}>
+      <Card.Img variant="top" src={item.val.imageLink} />
+      <Card.Body>
+        <Card.Title>{item.val.itemName}</Card.Title>
+        <Card.Subtitle>${item.val.itemPrice}</Card.Subtitle>
+        <Card.Text style={{ fontSize: 15 }}>
+          {item.val.itemDescription}
+        </Card.Text>
+        <Button
+          className="allOrdersButtonBox"
+          variant="primary"
+          onClick={(event) => handleTrackOrder(item.key, event)}
+        >
+          <img src={infosquaresvg} alt="InfoSquare svg" /> Track Order
+        </Button>
+      </Card.Body>
+    </Card>
+  ));
+
   return (
-    <div>
-      {orders.map((order) => (
-        <Card style={{ width: "18rem" }} key={order.sellerId}>
-          <Card.Img variant="top" src="holder.js/100px180?text=Image cap" />
-          <Card.Body>
-            <Card.Title>Card Title</Card.Title>
-            <Card.Text>
-              Some quick example text to build on the card title and make up the
-              bulk of the card's content.
-            </Card.Text>
-          </Card.Body>
-          <ListGroup className="list-group-flush">
-            <ListGroup.Item>Cras justo odio</ListGroup.Item>
-            <ListGroup.Item>Dapibus ac facilisis in</ListGroup.Item>
-            <ListGroup.Item>Vestibulum at eros</ListGroup.Item>
-          </ListGroup>
-          <Card.Body>
-            <Card.Link href="#">Card Link</Card.Link>
-            <Card.Link href="#">Another Link</Card.Link>
-          </Card.Body>
-        </Card>
-      ))}
-    </div>
+    <Container className="allOrdersPage">
+      <Row className="allOrdersTitleBar">
+        <Link to="/Profile">
+          <CaretLeft set="bold" primaryColor="#2FF522" />
+        </Link>
+        <label className="allOrdersTitle">All Orders</label>
+      </Row>
+      <Row className="allOrdersDivider">
+        <img src={divider} alt="divider" />
+      </Row>
+      <div className="allOrdersTabContainer">
+        <Link to="/Orders">
+          <Button
+            className="allOrdersTabBox"
+            variant="primary"
+          >
+            Orders
+          </Button>
+        </Link>
+        <Link to="/Sales">
+          <Button
+            className="allOrdersTabBox"
+            variant="primary"
+          >
+            Sales
+          </Button>
+        </Link>
+      </div>
+
+      <div className="allOrdersCenterViewBox">{orderCards}</div>
+    </Container>
   );
 };
 
