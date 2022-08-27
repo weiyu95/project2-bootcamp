@@ -32,7 +32,7 @@ const USER_CART_NAME = "cart";
 const USER_ORDERS_NAME = "orders";
 const Cart = (props) => {
   const [userCartItems, setUserCartItems] = useState([]);
-  const [itemData, setItemData] = useState([]);
+  const [itemsData, setItemsData] = useState([]);
 
   useEffect(() => {
     const cartRef = databaseRef(
@@ -47,11 +47,9 @@ const Cart = (props) => {
   useEffect(() => {
     const itemsRef = databaseRef(database, ITEMS_FOLDER_NAME);
     onChildAdded(itemsRef, (data) => {
-      setItemData((prev) => [...prev, { key: data.key, val: data.val() }]);
+      setItemsData((prev) => [...prev, { key: data.key, val: data.val() }]);
     });
   }, []);
-
-  console.log(itemData);
 
   useEffect(() => {
     const cartRef = databaseRef(
@@ -65,8 +63,8 @@ const Cart = (props) => {
     });
   }, []);
 
-  // console.log("logging user cart outside useEffect:");
-  // console.log(userCartItems);
+  console.log("logging user cart outside useEffect:");
+  console.log(userCartItems);
 
   const handleOrder = (itemOrdered, event) => {
     event.preventDefault();
@@ -83,55 +81,27 @@ const Cart = (props) => {
   };
 
   const handleDelete = (itemDeleted, event) => {
-    event.preventDefault();
     const updates = {};
-    updates[`/${USERS_FOLDER_NAME}/user/cart/${itemDeleted}`] = null;
+    updates[
+      `/${USERS_FOLDER_NAME}/${props.info.userID}/${USER_CART_NAME}/${itemDeleted}`
+    ] = null;
     update(databaseRef(database), updates);
   };
 
-  // const createCards = () => {
-  //   let cartCards = userCartItems.map((item) => {
-  //     return (
-  //       <Card className="cartBox" key={item.key}>
-  //         <Card.Img variant="top" src={itemData.val.itemImage} />
-  //         <Card.Body>
-  //           <Card.Title>{itemData.val.itemName}</Card.Title>
-  //           <Card.Subtitle>${itemData.val.itemPrice}</Card.Subtitle>
-  //           <Card.Text style={{ fontSize: 15 }}>
-  //             {itemData.val.itemDescription}
-  //           </Card.Text>
-  //           <Button
-  //             className="buttonBox"
-  //             variant="primary"
-  //             onClick={(event) => handleOrder(item.key, event)}
-  //           >
-  //             <img src={walletsvg} alt="Wallet svg" /> Order
-  //           </Button>
-  //           <Button
-  //             className="buttonBox"
-  //             variant="primary"
-  //             onClick={(event) => handleDelete(item.key, event)}
-  //           >
-  //             <img src={deletesvg} alt="Delete svg" /> Delete
-  //           </Button>
-  //         </Card.Body>
-  //       </Card>
-  //     );
-  //   });
-  // };
-
-  let cartCards = itemData.map((item) => (
-    <Card className="cartBox" key={item.key}>
+  let cartCards = userCartItems.map((item) => {
+    let itemData = itemsData.find((element) => element.key === item.key);
+    return (
+      <Card className="cartBox" key={itemData.key}>
         <Card.Img
           variant="top"
           className="cartImage"
-          src={item.val.itemImage}
+          src={itemData.val.itemImage}
         />
-        <Card.Body >
-          <Card.Title>{item.val.itemName}</Card.Title>
-          <Card.Subtitle>${item.val.itemPrice}</Card.Subtitle>
+        <Card.Body>
+          <Card.Title>{itemData.val.itemName}</Card.Title>
+          <Card.Subtitle>${itemData.val.itemPrice}</Card.Subtitle>
           <Card.Text style={{ fontSize: 15 }}>
-            {item.val.itemDescription}
+            {itemData.val.itemDescription}
           </Card.Text>
           <Button
             className="buttonBox"
@@ -148,8 +118,9 @@ const Cart = (props) => {
             <img src={deletesvg} alt="Delete svg" /> Delete
           </Button>
         </Card.Body>
-    </Card>
-  ));
+      </Card>
+    );
+  });
 
   return (
     <div>
@@ -165,7 +136,6 @@ const Cart = (props) => {
             <img src={divider} alt="divider" />
           </Row>
           <div className="cartCenterViewBox">{cartCards}</div>
-          {/* {createCards()} */}
         </Container>
       ) : (
         <Navigate to="/login" replace={true} />

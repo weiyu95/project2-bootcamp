@@ -120,7 +120,6 @@ body {
   border-style: solid;
   border-color: aliceblue;
   border-width: 2px;
-  
 }
 
 .currency-wrap {
@@ -131,7 +130,7 @@ body {
   position: absolute;
   color: black;
   left: 55px;
-  top:9px;
+  top: 9px;
 }
 
 .textBox {
@@ -161,4 +160,25 @@ textarea {
   border-radius: 35px;
   border-width: 3px;
   margin: 3%;
+}
+
+#itemDescription {
+  width: 250px;
+  height: 160px;
+}
+
+#itemPrice {
+  background-color: transparent;
+  border-width: 2px;
+  border-top: transparent;
+  border-left: transparent;
+  border-right: transparent;
+}
+
+#itemName {
+  border-width: 2px;
+  background-color: transparent;
+  border-top: transparent;
+  border-left: transparent;
+  border-right: transparent;
 }
