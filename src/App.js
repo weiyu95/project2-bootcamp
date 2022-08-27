@@ -20,6 +20,8 @@ import { Search } from "./Resources/Search.js";
 import { TrackOrderStatus } from "./Resources/TrackOrderStatus.js";
 import { Upload } from "./Resources/Upload.js";
 import { UploadPicture } from "./Resources/uploadpicture.js";
+import { Orders } from "./Resources/Orders";
+import { Sales } from "./Resources/Sales";
 
 const App = () => {
   const [userInfo, setuserInfo] = useState({
@@ -106,7 +108,9 @@ const App = () => {
           <Route path="profile/paymentmethod" element={<PaymentMethod />} />
           <Route path="search" element={<Search />} />
           <Route path="upload" element={<Upload info={userInfo} />} />
-          <Route path="cart" element={<Cart />} />
+          <Route path="cart" element={<Cart info={userInfo} />} />
+          <Route path="orders" element={<Orders />} />
+          <Route path="sales" element={<Sales />} />
         </Route>
       </Routes>
     </div>

@@ -7,7 +7,7 @@ body {
   margin: 0%;
 }
 
-.cartPage {
+.uploadPage {
   /* Same as profile */
   /* Auto layout */
   display: flex;
@@ -20,7 +20,7 @@ body {
   border-radius: 0px;
 }
 
-.cartTitleBar {
+.uploadTitleBar {
   position: absolute;
   top: 0;
   margin: 5%;
@@ -33,7 +33,7 @@ body {
   align-items: left;
 }
 
-.cartTitle {
+.uploadTitle {
   margin-left: 5%;
   text-align: left;
   width: 288px;
@@ -55,7 +55,7 @@ body {
   flex-grow: 1;
 }
 
-.cartDivider {
+.uploadDivider {
   margin-top: 14.5%;
   margin-left: 0;
 }
@@ -122,8 +122,31 @@ body {
   border-width: 2px;
 }
 
+.currency-wrap {
+  position: relative;
+}
+
+.currency-code {
+  position: absolute;
+  color: black;
+  left: 55px;
+  top: 9px;
+}
+
+.textBox {
+  padding: 10px 20px;
+  border: solid 1px #ccc;
+  border-radius: 5px;
+  font-family: "Noto Serif JP";
+}
+
 textarea {
   resize: none;
+  padding: 10px 20px;
+  border: solid 1px #ccc;
+  border-radius: 5px;
+  font-family: "Noto Serif JP";
+
 }
 
 .buttonBox {
@@ -140,31 +163,26 @@ textarea {
   margin: 3%;
 }
 
-#itemName {
-  width: 280px;
-  background-color: transparent;
-  border-top: transparent;
-  border-left: transparent;
-  border-right: transparent;
-  border-color: aliceblue;
-}
-#itemPrice {
-  width: 280px;
-  background-color: transparent;
-  border-top: transparent;
-  border-left: transparent;
-  border-right: transparent;
-  border-color: aliceblue;
-}
 
 #itemDescription {
-  width: 280px;
+  width: 250px;
   height: 160px;
-  background-color: transparent;
-  border-color: aliceblue;
 }
 
-.uploadLabel {
-  display: flex;
-  align-items: flex-start;
+#itemPrice {
+  background-color: transparent;
+  border-width: 2px;
+  border-top: transparent;
+  border-left: transparent;
+  border-right: transparent;
+}
+
+#itemName {
+  border-width: 2px;
+
+  background-color: transparent;
+  border-top: transparent;
+  border-left: transparent;
+  border-right: transparent;
+ 
 }

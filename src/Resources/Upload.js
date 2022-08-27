@@ -1,9 +1,5 @@
 import React, { useState } from "react";
-import {
-  push,
-  ref as databaseRef,
-  set,
-} from "firebase/database";
+import { push, ref as databaseRef, set } from "firebase/database";
 import { database, storage } from "../firebase";
 import {
   getDownloadURL,
@@ -56,12 +52,11 @@ const Upload = (props) => {
       imageInputFile: event.target.files[0],
     });
   };
-  console.log(newUpload);
-  console.log(imageUpload);
 
   const handleSubmit = (event) => {
     event.preventDefault();
-
+    console.log("this is newupload");
+    console.log(!newUpload);
     const fileRef = storageRef(
       storage,
       `${UPLOAD_IMAGES_FOLDER_NAME}/${props.info.userID}/${imageUpload.imageInputFile.name}`
@@ -76,6 +71,7 @@ const Upload = (props) => {
           itemImage: downloadUrl,
         });
         setNewUpload(initialState);
+        setImageUpload({ imageInputValue: "", imageInputFile: null });
       });
     });
   };
@@ -83,14 +79,14 @@ const Upload = (props) => {
   return (
     <div>
       {props.info.userIsLoggedIn ? (
-        <Container className="cartPage">
-          <Row className="cartTitleBar">
+        <Container className="uploadPage">
+          <Row className="uploadTitleBar">
             <Link to="/newsfeed">
               <CaretLeft set="bold" primaryColor="#2FF522" />
             </Link>
-            <label className="cartTitle">Upload</label>
+            <label className="uploadTitle">Upload</label>
           </Row>
-          <Row className="cartDivider">
+          <Row className="uploadDivider">
             <img src={divider} alt="divider" />
           </Row>
           <Row className="bodyBox">
@@ -98,49 +94,50 @@ const Upload = (props) => {
               What do you want to sell today?
             </label>
             <Row className="inputBox">
-              <form>
+              <form onSubmit={handleSubmit}>
                 <label for="itemName" className="uploadLabel">
                   Item Name
                 </label>
                 <input
+                  className="textBox"
                   type="text"
                   id="itemName"
                   name="itemName"
                   value={newUpload.itemName}
                   onChange={handleNewUpload}
+                  required
                 />
-              </form>
-            </Row>
-            <Row className="inputBox">
-              <form>
+
                 <label for="itemPrice" className="uploadLabel">
                   Item Price
                 </label>
-                <input
-                  type="number"
-                  id="itemPrice"
-                  name="itemPrice"
-                  value={newUpload.itemPrice}
-                  onChange={handleNewUpload}
-                />
-              </form>
-            </Row>
-            <Row className="inputBox">
-              <form>
+                <div class="currency-wrap">
+                  <span class="currency-code">$</span>
+                  <input
+                    className="textBox"
+                    type="number"
+                    id="itemPrice"
+                    name="itemPrice"
+                    min={1}
+                    value={newUpload.itemPrice}
+                    onChange={handleNewUpload}
+                    required
+                  />
+                </div>
+
                 <label for="itemImage" className="uploadLabel">
                   Item Image
                 </label>
                 <input
+                  className="textBox"
                   type="file"
                   id="itemImage"
                   name="itemImage"
                   value={imageUpload.imageInputValue}
                   onChange={handleImageUpload}
+                  required
                 />
-              </form>
-            </Row>
-            <Row className="inputBox">
-              <form>
+
                 <label for="itemName" className="uploadLabel">
                   Item Description
                 </label>
@@ -150,10 +147,14 @@ const Upload = (props) => {
                   rows="3"
                   value={newUpload.itemDescription}
                   onChange={handleNewUpload}
+                  required
                 />
+
+                <Button className="buttonBox" type="submit">
+                  Start Selling!
+                </Button>
               </form>
             </Row>
-            <Button className="buttonBox" onClick={handleSubmit}>Start Selling!</Button>
           </Row>
         </Container>
       ) : (

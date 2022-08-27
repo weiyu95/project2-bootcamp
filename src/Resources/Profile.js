@@ -22,9 +22,26 @@ const Profile = (props) => {
         setimageurl(url);
       })
       .catch((error) => {
-        // A full list of error codes is available at
-        // https://firebase.google.com/docs/storage/web/handle-errors
-        console.log(error);
+        // // A full list of error codes is available at
+        // // https://firebase.google.com/docs/storage/web/handle-errors
+        // switch (error.code) {
+        //   case "storage/object-not-found":
+        //     window.alert("File doesn't exist"); // File doesn't exist
+        //     break;
+        //   case "storage/unauthorized":
+        //     window.alert("User doesn't have permission to access the object"); // User doesn't have permission to access the object
+        //     break;
+        //   case "storage/canceled":
+        //     window.alert("User canceled the upload"); // User canceled the upload
+        //     break;
+        //   case "storage/unknown":
+        //     window.alert("Unknown error occurred, inspect the server response"); // Unknown error occurred, inspect the server response
+        //     break;
+        //   default:
+        //     window.alert("critical error");
+        //     break;
+      // }
+      console.log(error);
       });
   }
 

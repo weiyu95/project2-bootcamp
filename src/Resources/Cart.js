@@ -2,79 +2,146 @@ import React, { useState, useEffect } from "react";
 import {
   push,
   onChildAdded,
+  onChildRemoved,
   ref as databaseRef,
   update,
   set,
+  get,
+  equalTo,
+  onValue,
+  DataSnapshot,
 } from "firebase/database";
 import { database } from "../firebase";
+import { Outlet, Link, Navigate } from "react-router-dom";
+import "./cssfiles/Cart.css";
+//***imports from images folder***
+import divider from "./images/NavBar Divider.svg";
+import deletesvg from "./images/Delete.svg";
+import walletsvg from "./images/Wallet.svg";
+//***imports from react-bootstrap***
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
-import { Outlet, Link } from "react-router-dom";
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+//***imports from react-iconly***
+import { CaretLeft } from "react-iconly";
 
 const USERS_FOLDER_NAME = "users";
-const USER_ORDERS_NAME = `${USERS_FOLDER_NAME}/user/orders`;
-
-const Cart = ({ user }) => {
+const ITEMS_FOLDER_NAME = "items";
+const USER_CART_NAME = "cart";
+const USER_ORDERS_NAME = "orders";
+const Cart = (props) => {
   const [userCartItems, setUserCartItems] = useState([]);
+  const [itemsData, setItemsData] = useState([]);
 
   useEffect(() => {
-    const userRef = databaseRef(database, `${USERS_FOLDER_NAME}/user/cart`);
-    onChildAdded(userRef, (data) => {
-      setUserCartItems((prevState) => [
-        ...prevState,
-        { key: data.key, val: data.val() },
-      ]);
+    const cartRef = databaseRef(
+      database,
+      `${USERS_FOLDER_NAME}/${props.info.userID}/${USER_CART_NAME}`
+    );
+    onChildAdded(cartRef, (data) => {
+      setUserCartItems((prevState) => [...prevState, { key: data.key }]);
     });
   }, []);
 
+  useEffect(() => {
+    const itemsRef = databaseRef(database, ITEMS_FOLDER_NAME);
+    onChildAdded(itemsRef, (data) => {
+      setItemsData((prev) => [...prev, { key: data.key, val: data.val() }]);
+    });
+  }, []);
+
+  useEffect(() => {
+    const cartRef = databaseRef(
+      database,
+      `${USERS_FOLDER_NAME}/${props.info.userID}/${USER_CART_NAME}`
+    );
+    onChildRemoved(cartRef, (data) => {
+      setUserCartItems((prev) => {
+        return prev.filter((cartItems) => cartItems.key !== data.key);
+      });
+    });
+  }, []);
+
+  console.log("logging user cart outside useEffect:");
   console.log(userCartItems);
 
-  const handleOrder = (itemOrdered) => {
-    const ordersListRef = databaseRef(database, USER_ORDERS_NAME);
+  const handleOrder = (itemOrdered, event) => {
+    event.preventDefault();
+    const ordersListRef = databaseRef(
+      database,
+      `${USERS_FOLDER_NAME}/${props.info.userID}/${USER_ORDERS_NAME}`
+    );
     const newOrderRef = push(ordersListRef);
-    const index = userCartItems.findIndex((item)=>item.key === itemOrdered)
-    console.log(index)
-    console.log(itemOrdered)
+    const index = userCartItems.findIndex((item) => item.key === itemOrdered);
+    console.log(index);
+    console.log(itemOrdered);
     set(newOrderRef, userCartItems[index]);
     handleDelete(itemOrdered);
   };
 
-  const handleDelete = (itemDeleted) => {
-    console.log(itemDeleted);
-    console.log(`old cart: ${userCartItems}`);
-    const newArray = userCartItems.filter(
-      (cartItems) => cartItems.key !== itemDeleted
-    );
-    setUserCartItems(newArray);
-    console.log(`newArray: ${newArray}`);
-    console.log(`new cart: ${userCartItems}`)
+  const handleDelete = (itemDeleted, event) => {
     const updates = {};
-    updates[`/${USERS_FOLDER_NAME}/user/cart/${itemDeleted}`] = null;
-    return update(databaseRef(database), updates);
+    updates[
+      `/${USERS_FOLDER_NAME}/${props.info.userID}/${USER_CART_NAME}/${itemDeleted}`
+    ] = null;
+    update(databaseRef(database), updates);
   };
 
-  let cartCards = userCartItems.map((item) => (
-    <Card style={{ width: "18rem", position: "center" }} key={item.key}>
-      <Card.Img variant="top" src={item.val.imageLink} />
-      <Card.Body>
-        <Card.Title>{item.val.itemName}</Card.Title>
-        <Card.Subtitle className="mb-2 text-muted">
-          ${item.val.itemPrice}
-        </Card.Subtitle>
-        <Card.Text style={{ fontSize: 20 }}>
-          {item.val.itemDescription}
-        </Card.Text>
-        <Button variant="primary" onClick={() => handleOrder(item.key)}>
-          Order
-        </Button>
-        <Button variant="primary" onClick={() => handleDelete(item.key)}>
-          Remove
-        </Button>
-      </Card.Body>
-    </Card>
-  ));
+  let cartCards = userCartItems.map((item) => {
+    let itemData = itemsData.find((element) => element.key === item.key);
+    return (
+      <Card className="cartBox" key={itemData.key}>
+        <Card.Img
+          variant="top"
+          className="cartImage"
+          src={itemData.val.itemImage}
+        />
+        <Card.Body>
+          <Card.Title>{itemData.val.itemName}</Card.Title>
+          <Card.Subtitle>${itemData.val.itemPrice}</Card.Subtitle>
+          <Card.Text style={{ fontSize: 15 }}>
+            {itemData.val.itemDescription}
+          </Card.Text>
+          <Button
+            className="buttonBox"
+            variant="primary"
+            onClick={(event) => handleOrder(item.key, event)}
+          >
+            <img src={walletsvg} alt="Wallet svg" /> Order
+          </Button>
+          <Button
+            className="buttonBox"
+            variant="primary"
+            onClick={(event) => handleDelete(item.key, event)}
+          >
+            <img src={deletesvg} alt="Delete svg" /> Delete
+          </Button>
+        </Card.Body>
+      </Card>
+    );
+  });
 
-  return cartCards;
+  return (
+    <div>
+      {props.info.userIsLoggedIn ? (
+        <Container className="cartPage">
+          <Row className="cartTitleBar">
+            <Link to="/newsfeed">
+              <CaretLeft set="bold" primaryColor="#2FF522" />
+            </Link>
+            <label className="cartTitle">Cart</label>
+          </Row>
+          <Row className="cartDivider">
+            <img src={divider} alt="divider" />
+          </Row>
+          <div className="cartCenterViewBox">{cartCards}</div>
+        </Container>
+      ) : (
+        <Navigate to="/login" replace={true} />
+      )}
+    </div>
+  );
 };
 
 export { Cart };
