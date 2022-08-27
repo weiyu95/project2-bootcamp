@@ -146,6 +146,7 @@ textarea {
   border: solid 1px #ccc;
   border-radius: 5px;
   font-family: "Noto Serif JP";
+
 }
 
 .buttonBox {
@@ -162,6 +163,7 @@ textarea {
   margin: 3%;
 }
 
+
 #itemDescription {
   width: 250px;
   height: 160px;
@@ -177,8 +179,10 @@ textarea {
 
 #itemName {
   border-width: 2px;
+
   background-color: transparent;
   border-top: transparent;
   border-left: transparent;
   border-right: transparent;
+ 
 }
