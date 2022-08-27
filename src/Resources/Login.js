@@ -6,12 +6,12 @@ import apple from "./images/Apple.png";
 import facebook from "./images/Facebook.png";
 import google from "./images/Google.png";
 import { Link, Navigate } from "react-router-dom";
-import { auth } from "../firebase";
+import { auth, fblogin, googIn } from "../firebase";
 import {
+  signInWithPopup,
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
 } from "firebase/auth";
-
 
 const Login = (props) => {
   const [username, setUsername] = useState(null);
@@ -43,6 +43,18 @@ const Login = (props) => {
         window.alert("Please Check your email to reset your password")
       )
       .catch((err) => window.alert("Enter your username"));
+  };
+
+  const thirdPartyAuth = (event) => {
+    if (event.target.id === "fb") {
+      signInWithPopup(auth, fblogin).catch((err) => {
+        console.log(err);
+      });
+    } else if (event.target.id === "goog") {
+      signInWithPopup(auth, googIn).catch((err) => {
+        console.log(err);
+      });
+    }
   };
 
   return (
@@ -104,10 +116,10 @@ const Login = (props) => {
               <img src={apple} alt="oops" />
             </li>
             <li>
-              <img src={facebook} alt="oops" />
+              <img id="fb" src={facebook} alt="oops" onClick={thirdPartyAuth} />
             </li>
             <li>
-              <img src={google} alt="oops" />
+              <img id="goog" src={google} alt="oops" onClick={thirdPartyAuth} />
             </li>
           </ul>
         </div>
