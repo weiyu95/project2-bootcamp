@@ -6,10 +6,6 @@ import {
   ref as databaseRef,
   update,
   set,
-  get,
-  equalTo,
-  onValue,
-  DataSnapshot,
 } from "firebase/database";
 import { database } from "../firebase";
 import { Outlet, Link, Navigate } from "react-router-dom";
@@ -113,7 +109,7 @@ const Cart = (props) => {
           <Button
             className="buttonBox"
             variant="primary"
-            onClick={(event) => handleDelete(item.key, event)}
+            onClick={() => handleDelete(item.key)}
           >
             <img src={deletesvg} alt="Delete svg" /> Delete
           </Button>
