@@ -7,7 +7,7 @@
   margin: 0%;
 } */
 
-.cartPage {
+.orderPage {
   /* Same as profile */
   /* Auto layout */
   display: flex;
@@ -20,7 +20,7 @@
   border-radius: 0px;
 }
 
-.cartTitleBar {
+.orderTitleBar {
   position: absolute;
   top: 0;
   margin: 5%;
@@ -33,7 +33,7 @@
   align-items: left;
 }
 
-.cartTitle {
+.orderTitle {
   margin-left: 5%;
   text-align: left;
   width: 288px;
@@ -66,11 +66,11 @@
   align-content: center;
 }
 
-.cartBox {
+.orderBox {
   margin: auto;
   margin-top: 20px;
   width: 319px;
-  height: 300px;
+  height: auto;
   background: #e94c00;
   border-radius: 35px;
   border-color: aliceblue;
@@ -81,7 +81,7 @@
   font-style: italic;
 }
 
-.cartImage{
+.orderImage{
   position:relative;
   object-fit: contain;
   width: auto;
@@ -89,10 +89,23 @@
   padding: 3%;
 }
 
-.buttonBox {
+.orderStatus{
+  background: #2ff522;
+  border-color: #2ff522;
+  border-style: solid;
+  border-width: 5px;
+  font-size: 20px;
+  font-family: "Noto Serif JP";
+  font-style: italic;
+  text-align: left;
+  padding: 3%;
+  color: black;
+}
+
+.orderButtonBox {
   position: relative;
   background: #2ff522;
-  width: 120px;
+  width: auto;
   font-family: "Noto Serif JP";
   font-style: italic;
   font-weight: 500;

@@ -6,7 +6,7 @@ import {
   update,
 } from "firebase/database";
 import { database } from "../firebase";
-import { Outlet, Link, Navigate } from "react-router-dom";
+import { Outlet, Link } from "react-router-dom";
 import "./cssfiles/Liked.css";
 //***imports from images folder***
 import divider from "./images/NavBar Divider.svg";
@@ -108,8 +108,6 @@ const LikedProducts = (props) => {
   });
 
   return (
-    <div>
-      {props.info.userIsLoggedIn ? (
         <Container className="likedPage">
           <Row className="likedTitleBar">
             <Link to="/profile">
@@ -122,10 +120,6 @@ const LikedProducts = (props) => {
           </Row>
           <div className="likedCenterViewBox">{likedCards}</div>
         </Container>
-      ) : (
-        <Navigate to="/login" replace={true} />
-      )}
-    </div>
   );
 };
 

@@ -26,6 +26,9 @@ const USERS_FOLDER_NAME = "users";
 const ITEMS_FOLDER_NAME = "items";
 const USER_CART_NAME = "cart";
 const USER_ORDERS_NAME = "orders";
+const ITEM_DELIVERY_STATUS_NAME = "deliveryStatus";
+const ITEM_SALES_STATUS_NAME = "itemSalesStatus";
+
 const Cart = (props) => {
   const [userCartItems, setUserCartItems] = useState([]);
   const [itemsData, setItemsData] = useState([]);
@@ -73,10 +76,18 @@ const Cart = (props) => {
     console.log(index);
     console.log(itemOrdered);
     set(newOrderRef, userCartItems[index]);
+    // set(newOrderRef, itemOrdered);
+    const updates = {};
+    updates[
+      `/${ITEMS_FOLDER_NAME}/${itemOrdered}/${ITEM_DELIVERY_STATUS_NAME}`
+    ] = "Preparing shipment";
+    updates[`/${ITEMS_FOLDER_NAME}/${itemOrdered}/${ITEM_SALES_STATUS_NAME}`] =
+      "Unavailable";
+    update(databaseRef(database), updates);
     handleDelete(itemOrdered);
   };
 
-  const handleDelete = (itemDeleted, event) => {
+  const handleDelete = (itemDeleted) => {
     const updates = {};
     updates[
       `/${USERS_FOLDER_NAME}/${props.info.userID}/${USER_CART_NAME}/${itemDeleted}`
@@ -84,39 +95,45 @@ const Cart = (props) => {
     update(databaseRef(database), updates);
   };
 
-  let cartCards = userCartItems.map((item) => {
-    let itemData = itemsData.find((element) => element.key === item.key);
-    return (
-      <Card className="cartBox" key={itemData.key}>
-        <Card.Img
-          variant="top"
-          className="cartImage"
-          src={itemData.val.itemImage}
-        />
-        <Card.Body>
-          <Card.Title>{itemData.val.itemName}</Card.Title>
-          <Card.Subtitle>${itemData.val.itemPrice}</Card.Subtitle>
-          <Card.Text style={{ fontSize: 15 }}>
-            {itemData.val.itemDescription}
-          </Card.Text>
-          <Button
-            className="buttonBox"
-            variant="primary"
-            onClick={(event) => handleOrder(item.key, event)}
-          >
-            <img src={walletsvg} alt="Wallet svg" /> Order
-          </Button>
-          <Button
-            className="buttonBox"
-            variant="primary"
-            onClick={() => handleDelete(item.key)}
-          >
-            <img src={deletesvg} alt="Delete svg" /> Delete
-          </Button>
-        </Card.Body>
-      </Card>
-    );
-  });
+  const renderCard = (userCart) => {
+    const card = userCart.map((item) => {
+      let itemData = itemsData.find((element) => element.key === item.key);
+      if (!itemData){
+        return <></>
+      }
+      return (
+        <Card className="cartBox" key={itemData.key}>
+          <Card.Img
+            variant="top"
+            className="cartImage"
+            src={itemData.val.itemImage}
+          />
+          <Card.Body>
+            <Card.Title>{itemData.val.itemName}</Card.Title>
+            <Card.Subtitle>${itemData.val.itemPrice}</Card.Subtitle>
+            <Card.Text style={{ fontSize: 15 }}>
+              {itemData.val.itemDescription}
+            </Card.Text>
+            <Button
+              className="buttonBox"
+              variant="primary"
+              onClick={(event) => handleOrder(item.key, event)}
+            >
+              <img src={walletsvg} alt="Wallet svg" /> Order
+            </Button>
+            <Button
+              className="buttonBox"
+              variant="primary"
+              onClick={() => handleDelete(item.key)}
+            >
+              <img src={deletesvg} alt="Delete svg" /> Delete
+            </Button>
+          </Card.Body>
+        </Card>
+      );
+    });
+    return card;
+  };
 
   return (
     <div>
@@ -131,7 +148,8 @@ const Cart = (props) => {
           <Row className="cartDivider">
             <img src={divider} alt="divider" />
           </Row>
-          <div className="cartCenterViewBox">{cartCards}</div>
+          <div className="cartCenterViewBox">{renderCard(userCartItems)}</div>
+          <div className="extraSpace"></div>
         </Container>
       ) : (
         <Navigate to="/login" replace={true} />

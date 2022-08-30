@@ -1,18 +1,15 @@
 import React, { useState, useEffect } from "react";
 import {
-  push,
   onChildAdded,
   onChildRemoved,
   ref as databaseRef,
   update,
-  set,
 } from "firebase/database";
 import { database } from "../firebase";
 import { Outlet, Link } from "react-router-dom";
-import "./cssfiles/Cart.css";
+import "./cssfiles/Orders.css";
 //***imports from images folder***
 import divider from "./images/NavBar Divider.svg";
-import deletesvg from "./images/Delete.svg";
 import walletsvg from "./images/Wallet.svg";
 //***imports from react-bootstrap***
 import Card from "react-bootstrap/Card";
@@ -23,24 +20,43 @@ import Row from "react-bootstrap/Row";
 import { CaretLeft } from "react-iconly";
 
 const USERS_FOLDER_NAME = "users";
-const USER_ORDERS_NAME = `${USERS_FOLDER_NAME}/user/orders`;
+const USER_ORDERS_NAME = "orders";
+const USER_ORDER_HISTORY_NAME = "orderHistory";
+const ITEMS_FOLDER_NAME = "items";
+const ITEM_DELIVERY_STATUS_NAME = "deliveryStatus";
 
-const Orders = ({ user }) => {
+const Orders = (props) => {
   const [userOrderedItems, setUserOrderedItems] = useState([]);
+  const [itemsData, setItemsData] = useState([]);
 
   useEffect(() => {
-    const userRef = databaseRef(database, `${USERS_FOLDER_NAME}/user/orders`);
-    onChildAdded(userRef, (data) => {
+    const orderRef = databaseRef(
+      database,
+      `${USERS_FOLDER_NAME}/${props.info.userID}/${USER_ORDERS_NAME}`
+    );
+    onChildAdded(orderRef, (data) => {
       setUserOrderedItems((prevState) => [
         ...prevState,
         { key: data.key, val: data.val() },
       ]);
     });
   }, []);
+  console.log("User Orders");
+  console.log(userOrderedItems);
 
   useEffect(() => {
-    const userRef = databaseRef(database, `${USERS_FOLDER_NAME}/user/orders`);
-    onChildRemoved(userRef, (data) => {
+    const itemsRef = databaseRef(database, ITEMS_FOLDER_NAME);
+    onChildAdded(itemsRef, (data) => {
+      setItemsData((prev) => [...prev, { key: data.key, val: data.val() }]);
+    });
+  }, []);
+
+  useEffect(() => {
+    const orderRef = databaseRef(
+      database,
+      `${USERS_FOLDER_NAME}/${props.info.userID}/${USER_ORDERS_NAME}`
+    );
+    onChildRemoved(orderRef, (data) => {
       setUserOrderedItems((prev) => {
         return prev.filter((orderedItems) => orderedItems.key !== data.key);
       });
@@ -49,50 +65,70 @@ const Orders = ({ user }) => {
 
   const handleOrderComplete = (itemReceived, event) => {
     event.preventDefault();
-    const ordersListRef = databaseRef(database, USER_ORDERS_NAME);
-    
-    handleDelete(itemReceived);
-  };
-
-  const handleDelete = (itemDeleted, event) => {
-    event.preventDefault();
+    const index = userOrderedItems.findIndex(
+      (item) => item.key === itemReceived
+    );
+    console.log(index);
+    console.log(userOrderedItems[0].val);
     const updates = {};
-    updates[`/${USERS_FOLDER_NAME}/user/orders/${itemDeleted}`] = null;
+    updates[
+      `/${ITEMS_FOLDER_NAME}/${itemReceived}/${ITEM_DELIVERY_STATUS_NAME}`
+    ] = "Completed";
+    updates[
+      `/${USERS_FOLDER_NAME}/${props.info.userID}/${USER_ORDER_HISTORY_NAME}/${itemReceived}`
+    ] = userOrderedItems[index].val;
     update(databaseRef(database), updates);
   };
 
-  let ordersCards = userOrderedItems.map((item) => (
-    <Card className="cartBox" key={item.key}>
-      <Card.Img variant="top" src={item.val.imageLink} />
-      <Card.Body>
-        <Card.Title>{item.val.itemName}</Card.Title>
-        <Card.Subtitle>${item.val.itemPrice}</Card.Subtitle>
-        <Card.Text style={{ fontSize: 15 }}>
-          {item.val.itemDescription}
-        </Card.Text>
-        <Button
-          className="buttonBox"
-          variant="primary"
-          onClick={(event) => handleOrderComplete(item.key, event)}
-        >
-          <img src={walletsvg} alt="Wallet svg" /> Order Received
-        </Button>
-      </Card.Body>
-    </Card>
-  ));
+  const renderCard = (userOrdered) => {
+    const card = userOrdered.map((item) => {
+      let itemData = itemsData.find((element) => element.key === item.val.key);
+      if (!itemData) {
+        return <></>;
+      }
+      return (
+        <Card className="orderBox" key={itemData.key}>
+          <Card.Img
+            variant="top"
+            className="orderImage"
+            src={itemData.val.itemImage}
+          />
+          <Card.Body>
+            <Card.Title>{itemData.val.itemName}</Card.Title>
+            <Card.Subtitle>${itemData.val.itemPrice}</Card.Subtitle>
+            <Card.Text style={{ fontSize: 15 }}>
+              {itemData.val.itemDescription}
+            </Card.Text>
+            <div className="orderStatus">
+              Order Status: {itemData.val.deliveryStatus}
+            </div>
+            <Button
+              className="orderButtonBox"
+              variant="primary"
+              onClick={(event) => handleOrderComplete(item.key, event)}
+            >
+              <img src={walletsvg} alt="Wallet svg" /> Order Received
+            </Button>
+          </Card.Body>
+        </Card>
+      );
+    });
+    return card;
+  };
 
   return (
-    <Container className="cartPage">
-      <Row className="cartTitleBar">
+    <Container className="orderPage">
+      <Row className="orderTitleBar">
         <Link to="/profile/allorders">
           <CaretLeft set="bold" primaryColor="#2FF522" />
         </Link>
-        <label className="cartTitle">Orders</label>
+        <label className="orderTitle">Orders</label>
       </Row>
       <Row className="cartDivider">
         <img src={divider} alt="divider" />
       </Row>
-      <div className="cartCenterViewBox">{ordersCards}</div>
+      <div className="cartCenterViewBox">{renderCard(userOrderedItems)}</div>
+      <div className="extraSpace"></div>
     </Container>
   );
 };
