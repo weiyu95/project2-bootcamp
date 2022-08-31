@@ -10,14 +10,10 @@ import { Outlet, Link } from "react-router-dom";
 import "./cssfiles/Sales.css";
 //***imports from images folder***
 import divider from "./images/NavBar Divider.svg";
-import deletesvg from "./images/Delete.svg";
-import walletsvg from "./images/Wallet.svg";
 //***imports from react-bootstrap***
 import Card from "react-bootstrap/Card";
-import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
-import Form from "react-bootstrap/Form";
 //***imports from react-iconly***
 import { CaretLeft } from "react-iconly";
 
