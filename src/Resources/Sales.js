@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from "react";
 import {
-  push,
   onChildAdded,
   onChildRemoved,
   ref as databaseRef,
   update,
-  set,
 } from "firebase/database";
 import { database } from "../firebase";
 import { Outlet, Link } from "react-router-dom";
-import "./cssfiles/Cart.css";
+import "./cssfiles/Sales.css";
 //***imports from images folder***
 import divider from "./images/NavBar Divider.svg";
 import deletesvg from "./images/Delete.svg";
@@ -19,85 +17,122 @@ import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
+import Form from "react-bootstrap/Form";
 //***imports from react-iconly***
 import { CaretLeft } from "react-iconly";
 
 const USERS_FOLDER_NAME = "users";
-const USER_ORDERS_NAME = `${USERS_FOLDER_NAME}/user/orders`;
+const ITEMS_FOLDER_NAME = "items";
+const USER_SALES_NAME = "sales";
+const ITEM_DELIVERY_STATUS_NAME = "deliveryStatus";
 
-const Sales = ({ user }) => {
-  const [userCartItems, setUserCartItems] = useState([]);
+const Sales = (props) => {
+  const [userSalesItems, setUserCartItems] = useState([]);
+  const [itemsData, setItemsData] = useState([]);
+  const [selectStatus, setSelectStatus] = useState("Prepaing Shipment");
 
   useEffect(() => {
-    const userRef = databaseRef(database, `${USERS_FOLDER_NAME}/user/cart`);
-    onChildAdded(userRef, (data) => {
-      setUserCartItems((prevState) => [
-        ...prevState,
-        { key: data.key, val: data.val() },
-      ]);
+    const salesRef = databaseRef(
+      database,
+      `${USERS_FOLDER_NAME}/${props.info.userID}/${USER_SALES_NAME}`
+    );
+    onChildAdded(salesRef, (data) => {
+      setUserCartItems((prevState) => [...prevState, { key: data.key }]);
     });
   }, []);
 
   useEffect(() => {
-    const userRef = databaseRef(database, `${USERS_FOLDER_NAME}/user/cart`);
-    onChildRemoved(userRef, (data) => {
+    const itemsRef = databaseRef(database, ITEMS_FOLDER_NAME);
+    onChildAdded(itemsRef, (data) => {
+      setItemsData((prev) => [...prev, { key: data.key, val: data.val() }]);
+    });
+  }, []);
+
+  useEffect(() => {
+    const salesRef = databaseRef(
+      database,
+      `${USERS_FOLDER_NAME}/${props.info.userID}/${USER_SALES_NAME}`
+    );
+    onChildRemoved(salesRef, (data) => {
       setUserCartItems((prev) => {
-        return prev.filter((cartItems) => cartItems.key !== data.key);
+        return prev.filter((salesItems) => salesItems.key !== data.key);
       });
     });
   }, []);
 
-  console.log("logging user cart outside useEffect:");
-  console.log(userCartItems);
-
-  const handleOrder = (itemOrdered, event) => {
-    event.preventDefault();
-    const ordersListRef = databaseRef(database, USER_ORDERS_NAME);
-    const newOrderRef = push(ordersListRef);
-    const index = userCartItems.findIndex((item) => item.key === itemOrdered);
-    console.log(index);
-    console.log(itemOrdered);
-    set(newOrderRef, userCartItems[index]);
-    handleDelete(itemOrdered);
+  const handleSelect = (event) => {
+    setSelectStatus(event.target.value);
   };
 
-  const handleDelete = (itemDeleted, event) => {
+  const handleDeliveryStatus = (event, itemSold) => {
     event.preventDefault();
     const updates = {};
-    updates[`/${USERS_FOLDER_NAME}/user/cart/${itemDeleted}`] = null;
+    updates[
+      `/${ITEMS_FOLDER_NAME}/${itemSold}/${ITEM_DELIVERY_STATUS_NAME}`
+    ] = selectStatus;
     update(databaseRef(database), updates);
+    console.log(itemSold);
+    console.log(selectStatus);
   };
 
-  let cartCards = userCartItems.map((item) => (
-    <Card className="cartBox" key={item.key}>
-      <Card.Img variant="top" src={item.val.imageLink} />
-      <Card.Body>
-        <Card.Title>{item.val.itemName}</Card.Title>
-        <Card.Subtitle>${item.val.itemPrice}</Card.Subtitle>
-        <Card.Text style={{ fontSize: 15 }}>
-          {item.val.itemDescription}
-        </Card.Text>
-        <Button
-          className="buttonBox"
-          variant="primary"
-          onClick={(event) => handleOrder(item.key, event)}
-        >
-          <img src={walletsvg} alt="Wallet svg" /> Order
-        </Button>
-        <Button
-          className="buttonBox"
-          variant="primary"
-          onClick={(event) => handleDelete(item.key, event)}
-        >
-          <img src={deletesvg} alt="Delete svg" /> Delete
-        </Button>
-      </Card.Body>
-    </Card>
-  ));
+  const renderCard = (userCart) => {
+    const card = userCart.map((item) => {
+      let itemData = itemsData.find((element) => element.key === item.key);
+      console.log(itemsData);
+      if (!itemData) {
+        return <></>;
+      }
+      return (
+        <Card className="salesBox" key={itemData.key}>
+          <Card.Img
+            variant="top"
+            className="salesImage"
+            src={itemData.val.itemImage}
+          />
+          <Card.Body>
+            <Card.Title>{itemData.val.itemName}</Card.Title>
+            <Card.Subtitle>${itemData.val.itemPrice}</Card.Subtitle>
+            <Card.Text style={{ fontSize: 15 }}>
+              {itemData.val.itemDescription}
+            </Card.Text>
+            {itemData.val.deliveryStatus === "Delivered" ? (
+              <div className="salesStatus">
+                Order Status: {itemData.val.deliveryStatus}
+              </div>
+            ) : (
+              <form onSubmit={(event) => handleDeliveryStatus(event, item.key)}>
+                <label>
+                  Delivery Status:
+                  <select
+                    value={selectStatus}
+                    className="salesButtonBox"
+                    onChange={handleSelect}
+                  >
+                    <option value="Preparing Shipment">
+                      Preparing Shipment
+                    </option>
+                    <option value="Collected by Logistic Partner">
+                      Collected by Logistic Partner
+                    </option>
+                    <option value="Out for Delivery">Out for Delivery</option>
+                  </select>
+                </label>
+                <input
+                  type="submit"
+                  value="Submit"
+                  className="salesButtonBox"
+                />
+              </form>
+            )}
+          </Card.Body>
+        </Card>
+      );
+    });
+    return card;
+  };
 
   return (
     <Container className="cartPage">
-      This is Sales Page
       <Row className="cartTitleBar">
         <Link to="/profile/allorders">
           <CaretLeft set="bold" primaryColor="#2FF522" />
@@ -107,7 +142,8 @@ const Sales = ({ user }) => {
       <Row className="cartDivider">
         <img src={divider} alt="divider" />
       </Row>
-      <div className="cartCenterViewBox">{cartCards}</div>
+      <div className="cartCenterViewBox">{renderCard(userSalesItems)}</div>
+      <div className="extraSpace"></div>
     </Container>
   );
 };

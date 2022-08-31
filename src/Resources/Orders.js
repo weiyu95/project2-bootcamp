@@ -68,15 +68,14 @@ const Orders = (props) => {
     const index = userOrderedItems.findIndex(
       (item) => item.key === itemReceived
     );
-    console.log(index);
-    console.log(userOrderedItems[0].val);
     const updates = {};
     updates[
-      `/${ITEMS_FOLDER_NAME}/${itemReceived}/${ITEM_DELIVERY_STATUS_NAME}`
-    ] = "Completed";
+      `/${ITEMS_FOLDER_NAME}/${userOrderedItems[index].val.key}/${ITEM_DELIVERY_STATUS_NAME}`
+    ] = "Delivered";
     updates[
       `/${USERS_FOLDER_NAME}/${props.info.userID}/${USER_ORDER_HISTORY_NAME}/${itemReceived}`
     ] = userOrderedItems[index].val;
+    updates[`/${USERS_FOLDER_NAME}/${props.info.userID}/${USER_ORDERS_NAME}/${itemReceived}`] = null;
     update(databaseRef(database), updates);
   };
 
@@ -102,13 +101,24 @@ const Orders = (props) => {
             <div className="orderStatus">
               Order Status: {itemData.val.deliveryStatus}
             </div>
-            <Button
-              className="orderButtonBox"
-              variant="primary"
-              onClick={(event) => handleOrderComplete(item.key, event)}
-            >
-              <img src={walletsvg} alt="Wallet svg" /> Order Received
-            </Button>
+            {itemData.val.deliveryStatus === "Out for Delivery" ? (
+              <Button
+                className="orderButtonBox"
+                variant="primary"
+                onClick={(event) => handleOrderComplete(item.key, event)}
+              >
+                <img src={walletsvg} alt="Wallet svg" /> Order Received
+              </Button>
+            ) : (
+              <Button
+                className="orderButtonBox"
+                variant="primary"
+                disabled
+                
+              >
+                <img src={walletsvg} alt="Wallet svg" /> Order Received
+              </Button>
+            )}
           </Card.Body>
         </Card>
       );
