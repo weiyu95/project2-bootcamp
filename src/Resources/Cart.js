@@ -102,10 +102,10 @@ const Cart = (props) => {
         return <></>
       }
       return (
-        <Card className="cartBox" key={itemData.key}>
+        <Card className="cardBox" key={itemData.key}>
           <Card.Img
             variant="top"
-            className="cartImage"
+            className="cardImage"
             src={itemData.val.itemImage}
           />
           <Card.Body>
@@ -115,14 +115,14 @@ const Cart = (props) => {
               {itemData.val.itemDescription}
             </Card.Text>
             <Button
-              className="buttonBox"
+              className="btnBox"
               variant="primary"
               onClick={(event) => handleOrder(item.key, event)}
             >
               <img src={walletsvg} alt="Wallet svg" /> Order
             </Button>
             <Button
-              className="buttonBox"
+              className="btnBox"
               variant="primary"
               onClick={() => handleDelete(item.key)}
             >
@@ -138,17 +138,17 @@ const Cart = (props) => {
   return (
     <div>
       {props.info.userIsLoggedIn ? (
-        <Container className="cartPage">
-          <Row className="cartTitleBar">
+        <Container className="pageBody">
+          <div className="pageTitleBar">
             <Link to="/newsfeed">
               <CaretLeft set="bold" primaryColor="#2FF522" />
             </Link>
-            <label className="cartTitle">Cart</label>
-          </Row>
-          <Row className="cartDivider">
+            <label className="pageTitle">Cart</label>
+          </div>
+          <Row className="pageDivider">
             <img src={divider} alt="divider" />
           </Row>
-          <div className="cartCenterViewBox">{renderCard(userCartItems)}</div>
+          <div className="cardCenterViewBox">{renderCard(userCartItems)}</div>
           <div className="extraSpace"></div>
         </Container>
       ) : (
