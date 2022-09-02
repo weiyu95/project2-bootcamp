@@ -60,8 +60,9 @@ body {
 }
 
 .cardCenterViewBox {
-  justify-content: center;
-  align-content: center;
+  margin: auto;
+  width: auto;
+  padding: 10px 25px;
 }
 
 .cardBox {
@@ -114,8 +115,9 @@ body {
   border-radius: 35px;
   border-width: 3px;
   margin: 3%;
+  padding: 5px 20px
 }
 
 .extraSpace {
-  padding: 10%;
+  padding: 15%;
 }
