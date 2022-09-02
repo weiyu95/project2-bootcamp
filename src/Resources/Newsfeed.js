@@ -11,21 +11,17 @@ import {
 } from "firebase/database";
 import "./cssfiles/Newsfeed.css";
 import { User, Heart } from "react-iconly";
-import sample from "./images/Gendou card.png";
+// import sample from "./images/Gendou card.png";
 import { Outlet, Link } from "react-router-dom";
 
 const USERS_FOLDER_NAME = "users";
 const ITEMS_FOLDER_NAME = "items";
 const USER_CART_NAME = "cart";
-const UPLOAD_IMAGES_FOLDER_NAME = "ItemStorage";
 
 const Newsfeed = (props) => {
   const [newsfeedItems, setNewsfeedItems] = useState([]);
   const [itemsData, setItemsData] = useState([]);
-  // const [imageUpload, setImageUpload] = useState({
-  //   imageInputValue: "",
-  //   imageInputFile: null,
-  // });
+  // const [sellersData, setSellersData] = useState([]);
 
   const [imageurl, setimageurl] = useState(null);
   if (props.info.profilePicURL !== "") {
@@ -41,6 +37,21 @@ const Newsfeed = (props) => {
         console.log(error);
       });
   }
+
+  // const [sellersPic, setSellersPic] = useState(null);
+  // if (props.info.sellerUserId !== "") {
+  //   const sellerImagesRef = ref(
+  //     storage,
+  //     `ProfilePictures/${props.info.sellerUserID}/${props.info.profilePicURL}`
+  //   );
+  //   getDownloadURL(sellerImagesRef)
+  //     .then((url) => {
+  //       setSellersPic(url);
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+  // }
 
   useEffect(() => {
     const newsfeedRef = databaseRef(database, ITEMS_FOLDER_NAME);
@@ -59,6 +70,14 @@ const Newsfeed = (props) => {
     });
   }, []);
 
+  // useEffect(() => {
+  //   const sellerRef = databaseRef(database, USERS_FOLDER_NAME);
+  //   onChildAdded(sellerRef, (data) => {
+  //     setSellersData((prev) => [...prev, { key: data.key, val: data.val() }]);
+  //   });
+  // }, []);
+
+  // Jia Han's drafting of the itemcard
   // const itemcard = () => {
   //   return (
   //     <div>
@@ -121,6 +140,11 @@ const Newsfeed = (props) => {
       if (!itemData) {
         return <div>{console.log("there is no item Data")}</div>;
       }
+      // let sellerData = sellersData.find((element) => element.key === item.key);
+      // if (!sellerData) {
+      //   return <div>{console.log("there is no seller Data")}</div>;
+      // }
+
       return (
         <div>
           <ul className="InstaCard">
@@ -172,57 +196,6 @@ const Newsfeed = (props) => {
     });
     return card;
   };
-
-  // let newsfeedCards = newsfeedItems.map((item) => {
-  //   let itemData = itemsData.find((element) => element.key === item.key);
-  //   return (
-  //     <div>
-  //       <ul className="InstaCard">
-  //         <li>
-  //           <ul className="ItemTitleBanner">
-  //             <li>
-  //               {imageurl != null ? (
-  //                 <img className="smallerpp" src={imageurl} alt="lolz" />
-  //               ) : (
-  //                 <div className="smallerpp">
-  //                   <User
-  //                     className="userNotLogin"
-  //                     set="bold"
-  //                     primaryColor="black"
-  //                   />
-  //                 </div>
-  //               )}
-  //             </li>
-  //             <li style={{ marginTop: 5 }}>{props.info.userdpname}</li>
-  //           </ul>
-  //         </li>
-  //         <li className="productpic">
-  //           <img className="pic" src={itemData.val.itemImage} alt="opps" />
-  //           <div className="likebtn">
-  //             <Heart set="bold" primaryColor="blueviolet" />
-  //           </div>
-  //         </li>
-  //         <li className="ItemTitle">{itemData.val.itemName}</li>
-  //         <li className="ItemDescrip">{itemData.val.itemDescription}</li>
-  //         <li>
-  //           <ul className="pricetable">
-  //             <li>
-  //               <button
-  //                 className="CartAdd"
-  //                 onClick={(event) => handleAddToCart(item.key, event)}
-  //               >
-  //                 Add to cart
-  //               </button>
-  //             </li>
-  //             <li style={{ marginTop: 5, marginRight: 160 }}>
-  //               {itemData.val.itemPrice}
-  //             </li>
-  //           </ul>
-  //         </li>
-  //       </ul>
-  //     </div>
-  //   );
-  // });
 
   return (
     <div>
