@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { push, ref as databaseRef, set } from "firebase/database";
+import { push, ref as databaseRef, set, update } from "firebase/database";
 import { database, storage } from "../firebase";
 import {
   getDownloadURL,
@@ -19,7 +19,9 @@ import Row from "react-bootstrap/Row";
 import { CaretLeft } from "react-iconly";
 
 const UPLOAD_IMAGES_FOLDER_NAME = "ItemStorage";
+const USERS_FOLDER_NAME = "users";
 const ITEMS_FOLDER_NAME = "items";
+const USER_SALES_FOLDER_NAME = "sales";
 
 const Upload = (props) => {
   const initialState = {
@@ -66,12 +68,19 @@ const Upload = (props) => {
       getDownloadURL(fileRef).then((downloadUrl) => {
         const itemsListRef = databaseRef(database, ITEMS_FOLDER_NAME);
         const newItemRef = push(itemsListRef);
+        const newItemRefKey = newItemRef.key;
+        console.log(newItemRefKey);
         set(newItemRef, {
           ...newUpload,
           itemImage: downloadUrl,
         });
         setNewUpload(initialState);
         setImageUpload({ imageInputValue: "", imageInputFile: null });
+        const updates = {};
+        updates[
+          `/${USERS_FOLDER_NAME}/${props.info.userID}/${USER_SALES_FOLDER_NAME}/${newItemRefKey}`
+        ] = "";
+        update(databaseRef(database), updates);
       });
     });
   };

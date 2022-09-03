@@ -109,7 +109,7 @@ const AllOrders = ({ user }) => {
           </Button>
         </Link>
       </div>
-
+      <div></div>
       <div className="allOrdersCenterViewBox">{orderCards}</div>
     </Container>
   );

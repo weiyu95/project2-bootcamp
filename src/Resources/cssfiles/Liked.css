@@ -70,7 +70,7 @@
   margin: auto;
   margin-top: 20px;
   width: 319px;
-  height: 18rem;
+  height: 300px;
   background: #e94c00;
   border-radius: 35px;
   border-color: aliceblue;
@@ -79,6 +79,14 @@
   font-size: 20px;
   font-family: "Noto Serif JP";
   font-style: italic;
+}
+
+.likedImage{
+  position:relative;
+  object-fit: contain;
+  width: auto;
+  height:100px;
+  padding: 3%;
 }
 
 .likedButtonBox {

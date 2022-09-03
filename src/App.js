@@ -98,19 +98,28 @@ const App = () => {
             path="profile/uploadpicture"
             element={<UploadPicture info={userInfo} setter={setuserInfo} />}
           />
-          <Route path="profile/likedproduct" element={<LikedProducts />} />
-          <Route path="profile/allorders" element={<AllOrders />} />
+          <Route
+            path="profile/likedproduct"
+            element={<LikedProducts info={userInfo} />}
+          />
+          <Route
+            path="profile/allorders"
+            element={<AllOrders info={userInfo} />}
+          />
           <Route
             path="profile/allorders/trackorderstatus"
-            element={<TrackOrderStatus />}
+            element={<TrackOrderStatus info={userInfo} />}
           />
-          <Route path="profile/orderhistory" element={<OrderHistory />} />
+          <Route
+            path="profile/orderhistory"
+            element={<OrderHistory info={userInfo} />}
+          />
           <Route path="profile/paymentmethod" element={<PaymentMethod />} />
           <Route path="search" element={<Search />} />
           <Route path="upload" element={<Upload info={userInfo} />} />
           <Route path="cart" element={<Cart info={userInfo} />} />
-          <Route path="orders" element={<Orders />} />
-          <Route path="sales" element={<Sales />} />
+          <Route path="orders" element={<Orders info={userInfo} />} />
+          <Route path="sales" element={<Sales info={userInfo} />} />
         </Route>
       </Routes>
     </div>
