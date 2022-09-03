@@ -19,7 +19,7 @@ import Row from "react-bootstrap/Row";
 import { CaretLeft } from "react-iconly";
 
 const UPLOAD_IMAGES_FOLDER_NAME = "ItemStorage";
-const USERS_FOLDER_NAME = "users"
+const USERS_FOLDER_NAME = "users";
 const ITEMS_FOLDER_NAME = "items";
 const USER_SALES_FOLDER_NAME = "sales";
 
@@ -68,8 +68,8 @@ const Upload = (props) => {
       getDownloadURL(fileRef).then((downloadUrl) => {
         const itemsListRef = databaseRef(database, ITEMS_FOLDER_NAME);
         const newItemRef = push(itemsListRef);
-        const newItemRefKey = newItemRef.key
-        console.log(newItemRefKey)
+        const newItemRefKey = newItemRef.key;
+        console.log(newItemRefKey);
         set(newItemRef, {
           ...newUpload,
           itemImage: downloadUrl,
