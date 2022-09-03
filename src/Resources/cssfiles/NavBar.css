@@ -2,10 +2,9 @@ body {
   background-color: #282c34;
   color: white;
   padding: 40px;
-  font-family: Arial;
+  font-family: "Noto Serif JP";
   text-align: center;
 }
-
 .btmbar {
   /* White bar at bottom of screen */
   position: fixed;
@@ -15,24 +14,20 @@ body {
   left: 0px;
   list-style: none;
   display: flex;
-
   background: #2e2c51;
   border-radius: 15px 15px 0px 0px;
   padding-inline-start: 0%;
 }
-
 .btmbar.li {
   margin: 0px 0px 0px 0px;
   flex-flow: row;
   justify-content: space-around;
   align-items: center;
 }
-
 .profile {
   width: 24px;
   height: 24px;
   border-radius: 50%;
   justify-content: center;
-
   background: #2e2c51;
 }

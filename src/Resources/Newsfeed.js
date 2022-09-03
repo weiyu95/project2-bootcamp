@@ -23,6 +23,7 @@ const Newsfeed = (props) => {
   const [itemsData, setItemsData] = useState([]);
   const [sellersData, setSellersData] = useState([]);
 
+
   const [imageurl, setimageurl] = useState(null);
   if (props.info.profilePicURL !== "") {
     const imagesRef = ref(
@@ -148,6 +149,7 @@ const Newsfeed = (props) => {
         return <div>{console.log("there is no seller Data")}</div>;
       }
 
+
       return (
         <div>
           <ul className="InstaCard">
@@ -166,12 +168,14 @@ const Newsfeed = (props) => {
             </li>
             <li className="productpic">
               <img className="pic" src={item.val.itemImage} alt="opps" />
+
               <div className="likebtn">
                 <Heart set="bold" primaryColor="blueviolet" />
               </div>
             </li>
             <li className="ItemTitle">{item.val.itemName}</li>
             <li className="ItemDescrip">{item.val.itemDescription}</li>
+
             <li>
               <ul className="pricetable">
                 <li>
@@ -184,6 +188,7 @@ const Newsfeed = (props) => {
                 </li>
                 <li style={{ marginTop: 5, marginRight: 160 }}>
                   {item.val.itemPrice}
+
                 </li>
               </ul>
             </li>
@@ -196,7 +201,6 @@ const Newsfeed = (props) => {
 
   return (
     <div>
-      <div>{newsfeedCards(newsfeedItems)}</div>
       <ul className="TitleCard">
         <li>
           {props.info.userIsLoggedIn ? (
@@ -220,7 +224,7 @@ const Newsfeed = (props) => {
           </h2>
         </li>
       </ul>
-      {/* <div>{newsfeedCards(newsfeedItems)}</div> */}
+      <div>{newsfeedCards(newsfeedItems)}</div>
       {/* <div>{itemcard()}</div>
       <div>{itemcard()}</div>
       <div>{itemcard()}</div> */}
@@ -228,3 +232,4 @@ const Newsfeed = (props) => {
   );
 };
 export { Newsfeed };
+
