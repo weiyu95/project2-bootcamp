@@ -86,7 +86,7 @@ const Orders = (props) => {
         return <></>;
       }
       return (
-        <Card className="orderBox" key={itemData.key}>
+        <Card className="cardBox" key={itemData.key}>
           <Card.Img
             variant="top"
             className="orderImage"
@@ -103,7 +103,7 @@ const Orders = (props) => {
             </div>
             {itemData.val.deliveryStatus === "Out for Delivery" ? (
               <Button
-                className="orderButtonBox"
+                className="btnBox"
                 variant="primary"
                 onClick={(event) => handleOrderComplete(item.key, event)}
               >
@@ -111,7 +111,7 @@ const Orders = (props) => {
               </Button>
             ) : (
               <Button
-                className="orderButtonBox"
+                className="btnBox"
                 variant="primary"
                 disabled
                 
@@ -127,17 +127,17 @@ const Orders = (props) => {
   };
 
   return (
-    <Container className="orderPage">
-      <Row className="orderTitleBar">
+    <Container className="pageBody">
+      <Row className="pageTitleBar">
         <Link to="/profile/allorders">
           <CaretLeft set="bold" primaryColor="#2FF522" />
         </Link>
-        <label className="orderTitle">Orders</label>
+        <label className="pageTitle">Orders</label>
       </Row>
-      <Row className="cartDivider">
+      <Row className="pageDivider">
         <img src={divider} alt="divider" />
       </Row>
-      <div className="cartCenterViewBox">{renderCard(userOrderedItems)}</div>
+      <div className="cardCenterViewBox">{renderCard(userOrderedItems)}</div>
       <div className="extraSpace"></div>
     </Container>
   );

@@ -21,7 +21,8 @@ const USER_CART_NAME = "cart";
 const Newsfeed = (props) => {
   const [newsfeedItems, setNewsfeedItems] = useState([]);
   const [itemsData, setItemsData] = useState([]);
-  // const [sellersData, setSellersData] = useState([]);
+  const [sellersData, setSellersData] = useState([]);
+
 
   const [imageurl, setimageurl] = useState(null);
   if (props.info.profilePicURL !== "") {
@@ -70,12 +71,12 @@ const Newsfeed = (props) => {
     });
   }, []);
 
-  // useEffect(() => {
-  //   const sellerRef = databaseRef(database, USERS_FOLDER_NAME);
-  //   onChildAdded(sellerRef, (data) => {
-  //     setSellersData((prev) => [...prev, { key: data.key, val: data.val() }]);
-  //   });
-  // }, []);
+  useEffect(() => {
+    const sellerRef = databaseRef(database, USERS_FOLDER_NAME);
+    onChildAdded(sellerRef, (data) => {
+      setSellersData((prev) => [...prev, { key: data.key, val: data.val() }]);
+    });
+  }, []);
 
   // Jia Han's drafting of the itemcard
   // const itemcard = () => {
@@ -133,17 +134,21 @@ const Newsfeed = (props) => {
   };
 
   // newsfeed rendering function
-
-  let newsfeedCards = (newsfeedItems) => {
-    const card = newsfeedItems.map((item) => {
-      let itemData = itemsData.find((element) => element.key === item.key);
-      if (!itemData) {
+  const newsfeedCards = (items) => {
+    const card = items.map((item) => {
+      console.log("item in newsfeeditems", item);
+      console.log("sellersData", sellersData);
+      // let itemData = itemsData.find((element) => element.key === item.key);
+      if (!items) {
         return <div>{console.log("there is no item Data")}</div>;
       }
-      // let sellerData = sellersData.find((element) => element.key === item.key);
-      // if (!sellerData) {
-      //   return <div>{console.log("there is no seller Data")}</div>;
-      // }
+      let sellerData = sellersData.find(
+        (element) => element.key === item.val.sellerUserId
+      );
+      if (!sellerData) {
+        return <div>{console.log("there is no seller Data")}</div>;
+      }
+
 
       return (
         <div>
@@ -152,29 +157,25 @@ const Newsfeed = (props) => {
             <li>
               <ul className="ItemTitleBanner">
                 <li>
-                  {imageurl != null ? (
-                    <img className="smallerpp" src={imageurl} alt="lolz" />
-                  ) : (
-                    <div className="smallerpp">
-                      <User
-                        className="userNotLogin"
-                        set="bold"
-                        primaryColor="black"
-                      />
-                    </div>
-                  )}
+                  <img
+                    className="smallerpp"
+                    src={sellerData.val.profilePicURL}
+                    alt="lolz"
+                  />
                 </li>
-                <li style={{ marginTop: 5 }}>{props.info.userdpname}</li>
+                <li style={{ marginTop: 5 }}>{sellerData.val.userdpname}</li>
               </ul>
             </li>
             <li className="productpic">
-              <img className="pic" src={itemData.val.itemImage} alt="opps" />
+              <img className="pic" src={item.val.itemImage} alt="opps" />
+
               <div className="likebtn">
                 <Heart set="bold" primaryColor="blueviolet" />
               </div>
             </li>
-            <li className="ItemTitle">{itemData.val.itemName}</li>
-            <li className="ItemDescrip">{itemData.val.itemDescription}</li>
+            <li className="ItemTitle">{item.val.itemName}</li>
+            <li className="ItemDescrip">{item.val.itemDescription}</li>
+
             <li>
               <ul className="pricetable">
                 <li>
@@ -186,7 +187,8 @@ const Newsfeed = (props) => {
                   </button>
                 </li>
                 <li style={{ marginTop: 5, marginRight: 160 }}>
-                  {itemData.val.itemPrice}
+                  {item.val.itemPrice}
+
                 </li>
               </ul>
             </li>
@@ -194,15 +196,19 @@ const Newsfeed = (props) => {
         </div>
       );
     });
-    return card;
+    return card.reverse();
   };
 
   return (
     <div>
       <ul className="TitleCard">
         <li>
-          {imageurl != null ? (
-            <img className="smallpp" src={imageurl} alt="lolz" />
+          {props.info.userIsLoggedIn ? (
+            <img
+              className="smallpp"
+              src={props.info.profilePicURL}
+              alt="lolz"
+            />
           ) : (
             <div className="smallpp">
               <User className="userNotLogin" set="bold" primaryColor="black" />
@@ -226,3 +232,4 @@ const Newsfeed = (props) => {
   );
 };
 export { Newsfeed };
+

@@ -79,10 +79,10 @@ const Sales = (props) => {
         return <></>;
       }
       return (
-        <Card className="salesBox" key={itemData.key}>
+        <Card className="cardBox" key={itemData.key}>
           <Card.Img
             variant="top"
-            className="salesImage"
+            className="cardImage"
             src={itemData.val.itemImage}
           />
           <Card.Body>
@@ -101,7 +101,7 @@ const Sales = (props) => {
                   Delivery Status:
                   <select
                     value={selectStatus}
-                    className="salesButtonBox"
+                    className="btnBox"
                     onChange={handleSelect}
                   >
                     <option value="Preparing Shipment">
@@ -116,7 +116,7 @@ const Sales = (props) => {
                 <input
                   type="submit"
                   value="Submit"
-                  className="salesButtonBox"
+                  className="btnBox"
                 />
               </form>
             )}
@@ -128,17 +128,17 @@ const Sales = (props) => {
   };
 
   return (
-    <Container className="cartPage">
-      <Row className="cartTitleBar">
+    <Container className="pageBody">
+      <Row className="pageTitleBar">
         <Link to="/profile/allorders">
           <CaretLeft set="bold" primaryColor="#2FF522" />
         </Link>
-        <label className="cartTitle">Sales</label>
+        <label className="pageTitle">Sales</label>
       </Row>
-      <Row className="cartDivider">
+      <Row className="pageDivider">
         <img src={divider} alt="divider" />
       </Row>
-      <div className="cartCenterViewBox">{renderCard(userSalesItems)}</div>
+      <div className="cardCenterViewBox">{renderCard(userSalesItems)}</div>
       <div className="extraSpace"></div>
     </Container>
   );

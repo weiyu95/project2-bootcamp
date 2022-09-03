@@ -77,8 +77,12 @@ const Profile = (props) => {
               <div className="Profilebox">
                 <ul className="Profilelist">
                   <li>
-                    {imageurl != null ? (
-                      <img className="CircleBorder" src={imageurl} alt="lolz" />
+                    {props.info.userIsLoggedIn ? (
+                      <img
+                        className="CircleBorder"
+                        src={props.info.profilePicURL}
+                        alt="lolz"
+                      />
                     ) : (
                       <div className="CircleBorder">
                         <User

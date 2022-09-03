@@ -75,7 +75,7 @@ const OrderHistory = (props) => {
         <Link to="/profile">
           <CaretLeft set="bold" primaryColor="#2FF522" />
         </Link>
-        <label className="pageTitle">Order History</label>
+        <label className="orderHistoryTitle">Order History</label>
       </Row>
       <Row className="pageDivider">
         <img src={divider} alt="divider" />
